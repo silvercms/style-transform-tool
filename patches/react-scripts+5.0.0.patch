@@ -1,0 +1,14 @@
+diff --git a/node_modules/react-scripts/config/webpack.config.js b/node_modules/react-scripts/config/webpack.config.js
+index 2b1b3bb..a687703 100644
+--- a/node_modules/react-scripts/config/webpack.config.js
++++ b/node_modules/react-scripts/config/webpack.config.js
+@@ -786,6 +786,9 @@ module.exports = function (webpackEnv) {
+             },
+           },
+         }),
++      new webpack.DefinePlugin({
++        process: { env: {} },
++      }),
+     ].filter(Boolean),
+     // Turn off performance processing because we utilize
+     // our own hints via the FileSizeReporter

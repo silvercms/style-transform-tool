@@ -3,6 +3,7 @@ import * as React from "react";
 import Editor from "react-simple-code-editor";
 import Highlight, { defaultProps } from "prism-react-renderer";
 import theme from "prism-react-renderer/themes/vsLight";
+import { useAutoControlled } from "../hooks/useAutoControlled";
 
 const handleHighlight = (code: string) => (
   <Highlight {...defaultProps} theme={theme} code={code} language="jsx">
@@ -22,18 +23,27 @@ const handleHighlight = (code: string) => (
 
 const editorStyle = {
   fontFamily: '"Fira code", "Fira Mono", monospace',
-  outline: 0,
+  outline: "1px solid",
+  minWidth: "40vw",
   ...theme.plain,
 };
 
 export interface EditorWithLineNumProp {
   code?: string;
+  onCodeChange?: (newCode: string) => void;
 }
 
-const MyEditor = ({ code }: EditorWithLineNumProp) => {
-  const [value, setValue] = React.useState(code ?? "");
+const MyEditor = ({ code, onCodeChange }: EditorWithLineNumProp) => {
+  const [value, setValue] = useAutoControlled<string>({
+    defaultValue: "",
+    value: code ?? "",
+  });
 
-  const handleValueChange = (value: string) => setValue(value);
+  const handleValueChange = (value: string) => {
+    setValue(value);
+    onCodeChange && onCodeChange(value);
+  };
+
   return (
     <Editor
       value={value}
