@@ -55,7 +55,7 @@ export default function ({ types: t }) {
 
               slotStylesString =
                 slotStylesString +
-                `// styles from ${currVariable}
+                `\n// styles from ${currVariable}
                 ${stylesSource.trim()}
                 `;
             }
