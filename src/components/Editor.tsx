@@ -4,7 +4,6 @@ import Editor from "react-simple-code-editor";
 import Highlight, { defaultProps } from "prism-react-renderer";
 import theme from "prism-react-renderer/themes/vsLight";
 import { useAutoControlled } from "../hooks/useAutoControlled";
-import { VariablesContext } from "../variablesContext";
 
 // type from prism
 type StyleObj = {
