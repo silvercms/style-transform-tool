@@ -4,22 +4,56 @@ import Editor from "react-simple-code-editor";
 import Highlight, { defaultProps } from "prism-react-renderer";
 import theme from "prism-react-renderer/themes/vsLight";
 import { useAutoControlled } from "../hooks/useAutoControlled";
+import { VariablesContext } from "../variablesContext";
 
-const handleHighlight = (code: string) => (
-  <Highlight {...defaultProps} theme={theme} code={code} language="jsx">
-    {({ className, style, tokens, getLineProps, getTokenProps }) => (
-      <>
-        {tokens.map((line, i) => (
-          <div {...getLineProps({ line, key: i })}>
-            {line.map((token, key) => (
-              <span {...getTokenProps({ token, key })} />
+// type from prism
+type StyleObj = {
+  [key: string]: string | number | null;
+};
+export type TokenOutputProps = {
+  key?: React.Key;
+  style?: StyleObj;
+  className: string;
+  children: string;
+  [otherProp: string]: any;
+};
+
+export type Token = {
+  types: string[];
+  content: string;
+  empty?: boolean;
+};
+//
+
+export type ComponentTokenRenderer = React.FC<{
+  token: Token;
+  tokenProps: TokenOutputProps;
+}>;
+
+const handleHighlight =
+  (TokenRenderer?: ComponentTokenRenderer) => (code: string) =>
+    (
+      <Highlight {...defaultProps} theme={theme} code={code} language="jsx">
+        {({ className, style, tokens, getLineProps, getTokenProps }) => (
+          <>
+            {tokens.map((line, i) => (
+              <div {...getLineProps({ line, key: i })}>
+                {line.map((token, key) =>
+                  TokenRenderer ? (
+                    <TokenRenderer
+                      token={token}
+                      tokenProps={getTokenProps({ token, key })}
+                    />
+                  ) : (
+                    <span {...getTokenProps({ token, key })} />
+                  )
+                )}
+              </div>
             ))}
-          </div>
-        ))}
-      </>
-    )}
-  </Highlight>
-);
+          </>
+        )}
+      </Highlight>
+    );
 
 const editorStyle = {
   fontFamily: '"Fira code", "Fira Mono", monospace',
@@ -31,9 +65,14 @@ const editorStyle = {
 export interface EditorWithLineNumProp {
   code?: string;
   onCodeChange?: (newCode: string) => void;
+  TokenRenderer?: ComponentTokenRenderer;
 }
 
-const MyEditor = ({ code, onCodeChange }: EditorWithLineNumProp) => {
+const MyEditor = ({
+  code,
+  onCodeChange,
+  TokenRenderer,
+}: EditorWithLineNumProp) => {
   const [value, setValue] = useAutoControlled<string>({
     defaultValue: "",
     value: code ?? "",
@@ -48,7 +87,7 @@ const MyEditor = ({ code, onCodeChange }: EditorWithLineNumProp) => {
     <Editor
       value={value}
       onValueChange={handleValueChange}
-      highlight={handleHighlight}
+      highlight={handleHighlight(TokenRenderer)}
       padding={10}
       textareaId="codeArea"
       className="editor"

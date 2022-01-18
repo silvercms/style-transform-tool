@@ -4,6 +4,8 @@ import * as Babel from "@babel/standalone";
 import { BabelFileResult } from "@babel/core";
 import template from "@babel/template";
 import { Identifier, ObjectExpression, ObjectProperty } from "@babel/types";
+import { VariablesContext } from "./variablesContext";
+import { ClickableVariablesRenderer } from "./components/ClickableVariablesRenderer";
 
 export const plugins: any = {};
 
@@ -64,26 +66,32 @@ const getAllVariables = (code: string): string[] => {
 function App() {
   const [userCode, setUserCode] = React.useState("");
 
-  const result = transformNameSpacedStyle(userCode, [
-    "searchFeedbackButton",
-    "topChevronButton",
-    "filterButton",
-  ]);
-  console.log(result?.code);
+  const allVariables = getAllVariables(userCode);
+  const [selectedVariables, setSelectedVariables] = React.useState<string[]>(
+    []
+  );
+  const variableContextValue = {
+    allVariables,
+    selectedVariables,
+    setSelectedVariables,
+  };
+
+  const result = transformNameSpacedStyle(userCode, selectedVariables);
   const display = result?.code ?? result?.error ?? "";
 
-  console.log(getAllVariables(userCode));
-
   return (
-    <div className="App">
-      <div style={{ display: "flex", justifyContent: "space-around" }}>
-        <Editor
-          code={userCode}
-          onCodeChange={(newCode) => setUserCode(newCode)}
-        />
-        <Editor code={display} />
+    <VariablesContext.Provider value={variableContextValue}>
+      <div className="App">
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          <Editor
+            code={userCode}
+            onCodeChange={(newCode) => setUserCode(newCode)}
+            TokenRenderer={ClickableVariablesRenderer}
+          />
+          <Editor code={display} />
+        </div>
       </div>
-    </div>
+    </VariablesContext.Provider>
   );
 }
 
