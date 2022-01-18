@@ -40,11 +40,12 @@ const handleHighlight =
                 {line.map((token, key) =>
                   TokenRenderer ? (
                     <TokenRenderer
+                      key={key}
                       token={token}
                       tokenProps={getTokenProps({ token, key })}
                     />
                   ) : (
-                    <span {...getTokenProps({ token, key })} />
+                    <span key={key} {...getTokenProps({ token, key })} />
                   )
                 )}
               </div>
