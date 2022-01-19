@@ -95,5 +95,6 @@ const MyEditor = ({
     />
   );
 };
+MyEditor.displayName = "Editor";
 
 export { MyEditor as Editor };
