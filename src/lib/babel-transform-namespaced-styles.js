@@ -1,4 +1,5 @@
 import template from "@babel/template";
+import { v0ToV9 } from "../tokenMapping/getColorToken.js";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function ({ types: t }) {
@@ -71,6 +72,21 @@ export default function ({ types: t }) {
           preserveComments: true,
         });
         path.replaceWith(makeStylesNode);
+
+        // replace v0 token with v9 token
+        path.traverse({
+          MemberExpression(path) {
+            if (path.node.object.name.indexOf("colorScheme") === 0) {
+              const scheme = path.node.object.name
+                .slice("colorScheme".length)
+                .toLowerCase();
+              const token = path.node.property.name;
+              const v9Token = v0ToV9({ scheme, token });
+              v9Token && path.replaceWithSourceString(v9Token);
+            }
+          },
+        });
+
         // path.insertBefore(t.expressionStatement(t.stringLiteral(``)));
       },
     },

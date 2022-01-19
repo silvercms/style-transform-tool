@@ -10,7 +10,7 @@ import {
   teamsHighContrastTheme as v0teamsHighContrastTheme,
 } from "@fluentui/react-northstar";
 
-export const v0ToV9 = ({ scheme, token }) => mapping[`${scheme}`][`${token}`];
+export const v0ToV9 = ({ scheme, token }) => mapping[`${scheme}`]?.[`${token}`];
 
 export const v0MappedSchemes = Object.keys(mapping);
 
