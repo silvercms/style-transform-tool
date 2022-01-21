@@ -63,7 +63,7 @@ const getAllVariables = (code: string): string[] => {
   }
 };
 
-function App() {
+function TransformApp() {
   const [userCode, setUserCode] = React.useState("");
 
   const allVariables = getAllVariables(userCode);
@@ -95,4 +95,4 @@ function App() {
   );
 }
 
-export default App;
+export default TransformApp;
