@@ -23,8 +23,8 @@ export const ColorTokenApp = () => {
   const v9Value = getV9ColorValues({ scheme, token });
 
   return (
-    <div style={{ padding: 50, paddingTop: 20 }}>
-      <Header as="h3" content={`v0 token ➡ v9 token`} />
+    <div style={{ paddingTop: 20 }}>
+      <Header as="h2" content={`v0 token ➡ v9 token`} />
 
       <div style={{ display: "flex", gap: 10 }}>
         <ColorSchemeDropdown setSelectedScheme={setScheme} />
@@ -55,7 +55,7 @@ export const AllTokens = ({ scheme }: { scheme: string }) => {
             return <></>;
           }
           return (
-            <div key={token} style={{ display: "flex", gap: 10 }}>
+            <div key={token} style={{ display: "flex", gap: 40 }}>
               <ColorToken name={`${scheme}.${token}`} value={v0Value} />
               <ColorToken name={v0ToV9({ scheme, token })} value={v9Value} />
             </div>
@@ -67,7 +67,7 @@ export const AllTokens = ({ scheme }: { scheme: string }) => {
 
   return (
     <>
-      <Header as="h3" content={`Token mapping in ${scheme} scheme:`} />
+      <Header as="h2" content={`Token mapping in ${scheme} scheme:`} />
       <Checkbox
         toggle
         label={<span>show only tokens mapped to different colors</span>}

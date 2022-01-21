@@ -10,20 +10,30 @@ export const ColorSchemeDropdown = ({
 }: {
   setSelectedScheme: (scheme: string) => void;
 }) => (
-  <Dropdown
-    search
-    items={v0MappedSchemes}
-    placeholder={v0MappedSchemes[0]}
-    noResultsMessage="We couldn't find any matches."
-    getA11ySelectionMessage={{
-      onAdd: (item) => `${item} has been selected.`,
+  <div
+    style={{
+      display: "flex",
+      gap: 5,
+      flexDirection: "column",
+      alignItems: "start",
     }}
-    onChange={(e, data: DropdownProps) => {
-      data?.highlightedIndex !== null &&
-        data?.highlightedIndex !== undefined &&
-        setSelectedScheme(v0MappedSchemes[data?.highlightedIndex]);
-    }}
-  />
+  >
+    color scheme:
+    <Dropdown
+      search
+      items={v0MappedSchemes}
+      placeholder={v0MappedSchemes[0]}
+      noResultsMessage="We couldn't find any matches."
+      getA11ySelectionMessage={{
+        onAdd: (item) => `${item} has been selected.`,
+      }}
+      onChange={(e, data: DropdownProps) => {
+        data?.highlightedIndex !== null &&
+          data?.highlightedIndex !== undefined &&
+          setSelectedScheme(v0MappedSchemes[data?.highlightedIndex]);
+      }}
+    />
+  </div>
 );
 ColorSchemeDropdown.displayName = "ColorSchemeDropdown";
 
@@ -36,20 +46,30 @@ export const ColorTokenDropdown = ({
 }) => {
   const tokens = getTokensFromScheme(scheme);
   return (
-    <Dropdown
-      search
-      items={tokens}
-      placeholder={tokens[0]}
-      noResultsMessage="We couldn't find any matches."
-      getA11ySelectionMessage={{
-        onAdd: (item) => `${item} has been selected.`,
+    <div
+      style={{
+        display: "flex",
+        gap: 5,
+        flexDirection: "column",
+        alignItems: "start",
       }}
-      onChange={(e, data: DropdownProps) => {
-        data?.highlightedIndex !== null &&
-          data?.highlightedIndex !== undefined &&
-          setSelectedToken(tokens[data?.highlightedIndex]);
-      }}
-    />
+    >
+      token:
+      <Dropdown
+        search
+        items={tokens}
+        placeholder={tokens[0]}
+        noResultsMessage="We couldn't find any matches."
+        getA11ySelectionMessage={{
+          onAdd: (item) => `${item} has been selected.`,
+        }}
+        onChange={(e, data: DropdownProps) => {
+          data?.highlightedIndex !== null &&
+            data?.highlightedIndex !== undefined &&
+            setSelectedToken(tokens[data?.highlightedIndex]);
+        }}
+      />
+    </div>
   );
 };
 ColorTokenDropdown.displayName = "ColorTokenDropdown";

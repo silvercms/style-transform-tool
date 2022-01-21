@@ -7,9 +7,18 @@ import { ColorTokenApp } from "./ColorTokenApp";
 ReactDOM.render(
   <React.StrictMode>
     <Provider theme={teamsTheme}>
-      <ColorTokenApp />
-      <Divider style={{ height: 80 }} />
-      <TransformApp />
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <ColorTokenApp />
+        <Divider style={{ height: 80 }} />
+        <TransformApp />
+      </div>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")
