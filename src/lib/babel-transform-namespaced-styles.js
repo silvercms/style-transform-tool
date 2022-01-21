@@ -76,7 +76,10 @@ export default function ({ types: t }) {
         // replace v0 token with v9 token
         path.traverse({
           MemberExpression(path) {
-            if (path.node.object.name.indexOf("colorScheme") === 0) {
+            if (
+              path.node.object.name &&
+              path.node.object.name.indexOf("colorScheme") === 0
+            ) {
               const scheme = path.node.object.name
                 .slice("colorScheme".length)
                 .toLowerCase();
