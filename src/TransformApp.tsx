@@ -6,6 +6,7 @@ import template from "@babel/template";
 import { Identifier, ObjectExpression, ObjectProperty } from "@babel/types";
 import { VariablesContext } from "./variablesContext";
 import { ClickableVariablesRenderer } from "./components/ClickableVariablesRenderer";
+import { transformTokenInString } from "./lib/transformToken";
 
 export const plugins: any = {};
 
@@ -63,21 +64,36 @@ const getAllVariables = (code: string): string[] => {
   }
 };
 
+const isUserCodeObject = (userCode: string) => {
+  userCode = userCode.trim();
+  if (userCode[0] === "{" && userCode[userCode.length - 1] === "}") {
+    return true;
+  }
+  return false;
+};
+
 function TransformApp() {
   const [userCode, setUserCode] = React.useState("");
-
-  const allVariables = getAllVariables(userCode);
   const [selectedVariables, setSelectedVariables] = React.useState<string[]>(
     []
   );
+
+  let allVariables: string[] = [];
+  let result: string;
+
+  if (isUserCodeObject(userCode)) {
+    result = transformTokenInString(userCode);
+  } else {
+    allVariables = getAllVariables(userCode);
+    const transformed = transformNameSpacedStyle(userCode, selectedVariables);
+    result = transformed?.code ?? transformed?.error ?? "";
+  }
+
   const variableContextValue = {
     allVariables,
     selectedVariables,
     setSelectedVariables,
   };
-
-  const result = transformNameSpacedStyle(userCode, selectedVariables);
-  const display = result?.code ?? result?.error ?? "";
 
   return (
     <VariablesContext.Provider value={variableContextValue}>
@@ -88,7 +104,7 @@ function TransformApp() {
             onCodeChange={(newCode) => setUserCode(newCode)}
             TokenRenderer={ClickableVariablesRenderer}
           />
-          <Editor code={display} />
+          <Editor code={result} />
         </div>
       </div>
     </VariablesContext.Provider>

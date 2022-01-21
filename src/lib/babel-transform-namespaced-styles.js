@@ -9,7 +9,7 @@ export default function ({ types: t }) {
         path.unshiftContainer(
           "body",
           template.statement.ast(
-            `import { makeStyles } from "@msteams/components-teams-fluent-ui";`
+            `import { makeStyles, tokens } from "@msteams/components-teams-fluent-ui";`
           )
         );
       },
@@ -85,7 +85,7 @@ export default function ({ types: t }) {
                 .toLowerCase();
               const token = path.node.property.name;
               const v9Token = v0ToV9({ scheme, token });
-              v9Token && path.replaceWithSourceString(v9Token);
+              v9Token && path.replaceWithSourceString(`tokens.${v9Token}`);
             }
           },
         });
