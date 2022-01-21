@@ -32,3 +32,14 @@ export const getV9ColorValues = ({ scheme, token }) => {
     contrast: teamsHighContrastTheme[`${v9Token}`],
   };
 };
+
+export const unifyColor = (color) =>
+  color.length < 7
+    ? "#" +
+      color
+        .slice(1)
+        .split("")
+        .map((d) => d + d)
+        .join("")
+        .toLowerCase()
+    : color.toLowerCase();

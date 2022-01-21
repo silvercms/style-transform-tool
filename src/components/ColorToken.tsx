@@ -1,12 +1,14 @@
 import * as React from "react";
 
+export interface ColorTokenValue {
+  light: string;
+  dark: string;
+  contrast: string;
+}
+
 export interface ColorTokenProps {
   name: string;
-  value: {
-    light: string;
-    dark: string;
-    contrast: string;
-  };
+  value: ColorTokenValue;
 }
 
 export const ColorToken: React.FC<ColorTokenProps> = ({ name, value }) => (
@@ -17,6 +19,7 @@ export const ColorToken: React.FC<ColorTokenProps> = ({ name, value }) => (
         display: "grid",
         gridTemplateColumns: "1fr 1fr 1fr",
         maxWidth: 600,
+        minWidth: 300,
         borderTop: "1px dotted",
         borderBottom: "1px dotted",
         borderLeft: "1px dotted",
@@ -56,4 +59,8 @@ const getColorBlockStyles = (color: string) => {
 };
 
 const getTextColor = (bgColor: string) =>
-  parseInt(bgColor.replace("#", ""), 16) > 0xffffff / 2 ? "#000" : "#fff";
+  bgColor[0] !== "#"
+    ? "#000"
+    : parseInt(bgColor.replace("#", ""), 16) > 0xffffff / 2
+    ? "#000"
+    : "#fff";
