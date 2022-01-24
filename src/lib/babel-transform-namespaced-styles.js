@@ -9,7 +9,7 @@ export default function ({ types: t }) {
         path.unshiftContainer(
           "body",
           template.statement.ast(
-            `import { makeStyles, tokens } from "@msteams/components-teams-fluent-ui";`
+            `import { makeStyles, tokens, shorthands } from "@msteams/components-teams-fluent-ui";`
           )
         );
       },
@@ -52,7 +52,6 @@ export default function ({ types: t }) {
                 t,
                 stylesSource,
               });
-              // TODO here we replace variableName with v9 token name
 
               slotStylesString =
                 slotStylesString +

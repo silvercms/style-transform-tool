@@ -6,7 +6,11 @@ import { Identifier, ObjectExpression, ObjectProperty } from "@babel/types";
 import { VariablesContext } from "./variablesContext";
 import { ClickableVariablesRenderer } from "../components/ClickableVariablesRenderer";
 import { transformTokenInString } from "../lib/transformToken";
-import { TransformNameSpacedStyle } from "../loadBabel";
+import {
+  isUserCodeObject,
+  TransformNameSpacedStyle,
+  TransformShorthandsInStyleObject,
+} from "../loadBabel";
 import {
   ArrowUpIcon,
   Button,
@@ -43,22 +47,12 @@ const getAllVariables = (code: string): string[] => {
   }
 };
 
-const isUserCodeObject = (userCode: string) => {
-  userCode = userCode
-    .split("\n")
-    .filter((line) => !line.trim().startsWith("//"))
-    .join("\n")
-    .trim();
-  if (userCode[0] === "{" && userCode[userCode.length - 1] === "}") {
-    return true;
-  }
-  return false;
-};
-
 export function TransformApp({
   transformNameSpacedStyle,
+  transformShorthandsInStyleObject,
 }: {
   transformNameSpacedStyle: TransformNameSpacedStyle;
+  transformShorthandsInStyleObject: TransformShorthandsInStyleObject;
 }) {
   const [userCode, setUserCode] = React.useState<string>(placeholderCode);
   const [selectedVariables, setSelectedVariables] = React.useState<string[]>(
@@ -69,7 +63,7 @@ export function TransformApp({
   let result: string;
 
   if (isUserCodeObject(userCode)) {
-    result = transformTokenInString(userCode);
+    result = transformShorthandsInStyleObject(transformTokenInString(userCode));
   } else {
     allVariables = getAllVariables(userCode);
     const transformed = transformNameSpacedStyle(userCode, selectedVariables);
@@ -216,7 +210,10 @@ const Help = () => (
           <li>
             <Code>makeStyles</Code> hook with styles in selected variables
           </li>
-          <li>the corresponding color token</li>
+          <li>the corresponding color token from converged library</li>
+          <li>
+            expanded css shorthand using makeStyles <Code>shorthands</Code> api
+          </li>
         </ul>
       </li>
     </ul>
@@ -225,8 +222,13 @@ const Help = () => (
       <li>
         simply paste the styles object -<br />
         <Code>{`{ color: colorSchemeDefault.foreground }`}</Code> <br />
-        this tool will replace the color token with its corresponding token in
-        converged library
+        the result will contain:
+        <ul>
+          <li>the corresponding color token from converged library</li>
+          <li>
+            expanded css shorthand using makeStyles <Code>shorthands</Code> api
+          </li>
+        </ul>
       </li>
     </ul>
   </div>
@@ -243,6 +245,7 @@ const objectExample = `{
   position: "absolute",
   left: "50%",
   top: "50%",
+  overflow: "auto",
   transform: "translateX(-50%) translateY(-50%)",
   ":hover": {
     color: colorSchemeDefault.foregroundHover,
@@ -250,77 +253,51 @@ const objectExample = `{
   },
 }`;
 
-const namespacedExampleSelectedVariables = [
-  "webinarRegistrationPageImageDialogTriggerButton",
-  "deleteImageButton",
-];
-const nameSpacedExample = `// button-namespace-webinar.ts
-import { INamespacedOverrides } from "../../../namespace.interface";
+const namespacedExampleSelectedVariables = ["taskManager"];
+const nameSpacedExample = `// box-namespace-debug.ts
+import {
+  INamespacedOverrides,
+  INamespaceOverrideParam,
+} from "../../../namespace.interface";
 
 export default {
   root: {
-    webinarRegistrationPageImageDialogTriggerButton: ({
-      colorSchemeDefault,
-    }) => ({
-      color: colorSchemeDefault.foreground,
-      background: colorSchemeDefault.background,
+    apolloDebugPanel: () => ({
+      height: "auto",
+      maxHeight: "calc(100vh - 4.436rem - 8.4rem)",
+      overflow: "auto",
+      overflowX: "scroll",
+      padding: 0,
+      paddingBottom: "0.618rem",
+      userSelect: "text",
+    }),
+    taskManager: ({ colorSchemeDefault }: INamespaceOverrideParam) => ({
       backgroundColor: colorSchemeDefault.background,
+      border: \`0.1rem solid \${colorSchemeDefault.border2}\`,
+      bottom: "0.4rem",
+      color: colorSchemeDefault.foreground,
+      display: "flex",
+      flexDirection: "column",
+      opacity: 0.9,
+      overflow: "scroll",
+      padding: "1rem",
       position: "absolute",
-      left: "50%",
-      top: "50%",
-      transform: "translateX(-50%) translateY(-50%)",
-      ":hover": {
-        color: colorSchemeDefault.foregroundHover,
-        backgroundColor: colorSchemeDefault.backgroundHover1,
-      },
+      right: "0.4rem",
+      top: "14rem",
+      width: "80rem",
+      zIndex: 1000,
     }),
-    webinarPageAddSpeakerButton: () => ({
-      padding: 0,
-      justifyContent: "start",
-      width: "fit-content",
-      margin: "0 3.8rem", // distance from add speaker button to its container
+    settingsDebugPanelTableWrapper: () => ({
+      gridColumn: "1/3",
+      gridRow: 2,
+      overflow: "scroll",
+      height: "75vh",
     }),
-    webinarDeleteQuestionButton: () => ({
-      padding: 0,
-      width: "3.2rem",
-      minWidth: "3.2rem",
-    }),
-    addButton: () => ({
-      padding: 0,
-      justifyContent: "start",
-      width: "fit-content",
-    }),
-    registerButton: () => ({
-      width: "fit-content",
-      minWidth: "11.5rem",
-      height: "3.2rem",
-      padding: "0 1rem",
-      margin: "1.8rem 0",
-    }),
-    cancelRegisterButton: () => ({
-      padding: 0,
-      minWidth: "fit-content",
-    }),
-    deleteImageButton: ({ colorSchemeDefault, colorSchemeOnyx }) => ({
-      position: "absolute",
-      right: 0,
-      top: 0,
-      color: colorSchemeDefault.foreground3,
-      backgroundColor: colorSchemeOnyx.background,
-      background: colorSchemeOnyx.background,
-      ":hover": {
-        backgroundColor: colorSchemeOnyx.backgroundPressed,
-        color: colorSchemeDefault.foreground3,
-      },
-      ":active": {
-        backgroundColor: colorSchemeDefault.background5,
-        color: colorSchemeDefault.foreground4,
-      },
-    }),
-    promoOfferDialogCloseButton: () => ({
-      position: "absolute",
-      right: "2rem",
-      top: "1.8rem",
+    settingsDebugFilterDropdown: () => ({
+      maxHeight: "50vh",
+      overflow: "scroll",
+      display: "flex",
+      flexDirection: "column",
     }),
   },
 } as INamespacedOverrides;

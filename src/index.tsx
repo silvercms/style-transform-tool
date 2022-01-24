@@ -2,7 +2,10 @@ import { teamsTheme, Provider } from "@fluentui/react-northstar";
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, useRoutes } from "react-router-dom";
-import { transformNameSpacedStyle } from "./loadBabel";
+import {
+  transformNameSpacedStyle,
+  transformShorthandsInStyleObject,
+} from "./loadBabel";
 import { ColorTokenApp, Home, TransformApp } from "./pages";
 
 const App = () => {
@@ -11,7 +14,10 @@ const App = () => {
     {
       path: "transform",
       element: (
-        <TransformApp transformNameSpacedStyle={transformNameSpacedStyle} />
+        <TransformApp
+          transformNameSpacedStyle={transformNameSpacedStyle}
+          transformShorthandsInStyleObject={transformShorthandsInStyleObject}
+        />
       ),
     },
     { path: "colors", element: <ColorTokenApp /> },
