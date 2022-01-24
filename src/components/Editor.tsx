@@ -72,6 +72,7 @@ const editorStyle = {
 export interface EditorWithLineNumProp {
   title?: string;
   code?: string;
+  placeholderCode?: string;
   showCopyButton?: boolean;
   onCodeChange?: (newCode: string) => void;
   TokenRenderer?: ComponentTokenRenderer;
@@ -81,12 +82,13 @@ const MyEditor = ({
   title,
   showCopyButton,
   code,
+  placeholderCode,
   onCodeChange,
   TokenRenderer,
 }: EditorWithLineNumProp) => {
-  const [value, setValue] = useAutoControlled<string>({
-    defaultValue: "",
-    value: code ?? "",
+  const [value, setValue] = useAutoControlled<string | undefined>({
+    defaultValue: placeholderCode ?? "",
+    value: code,
   });
 
   const handleValueChange = (value: string) => {
@@ -115,10 +117,10 @@ const MyEditor = ({
         }}
       >
         {title ?? ""}
-        {showCopyButton && <CopyButton text={value} />}
+        {showCopyButton && value && <CopyButton text={value} />}
       </div>
       <Editor
-        value={value}
+        value={value ?? ""}
         onValueChange={handleValueChange}
         highlight={handleHighlight(TokenRenderer)}
         padding={10}

@@ -44,7 +44,11 @@ const getAllVariables = (code: string): string[] => {
 };
 
 const isUserCodeObject = (userCode: string) => {
-  userCode = userCode.trim();
+  userCode = userCode
+    .split("\n")
+    .filter((line) => !line.trim().startsWith("//"))
+    .join("\n")
+    .trim();
   if (userCode[0] === "{" && userCode[userCode.length - 1] === "}") {
     return true;
   }
@@ -56,7 +60,7 @@ export function TransformApp({
 }: {
   transformNameSpacedStyle: TransformNameSpacedStyle;
 }) {
-  const [userCode, setUserCode] = React.useState("");
+  const [userCode, setUserCode] = React.useState<string>(placeholderCode);
   const [selectedVariables, setSelectedVariables] = React.useState<string[]>(
     []
   );
@@ -134,6 +138,7 @@ export function TransformApp({
             gridTemplateColumns: "minmax(0, 1fr) 10px minmax(0, 1fr)",
             padding: 10,
             justifyContent: "space-evenly",
+            width: "100%",
           }}
         >
           <Editor
@@ -141,6 +146,7 @@ export function TransformApp({
             code={userCode}
             onCodeChange={(newCode) => setUserCode(newCode)}
             TokenRenderer={ClickableVariablesRenderer}
+            placeholderCode={placeholderCode}
           />
           <div />
           <Editor title={"Result"} code={result} showCopyButton />
@@ -150,6 +156,11 @@ export function TransformApp({
     </VariablesContext.Provider>
   );
 }
+
+const placeholderCode = `// paste *-namespace-*.ts styles file, or
+// paste a style object 
+{ color: colorSchemeDefault.foreground }
+`;
 
 const ScrollToTopButton = () => {
   const [showButton, setShowButton] = React.useState(false);
