@@ -8,11 +8,13 @@ import { ClickableVariablesRenderer } from "../components/ClickableVariablesRend
 import { transformTokenInString } from "../lib/transformToken";
 import { TransformNameSpacedStyle } from "../loadBabel";
 import {
+  ArrowUpIcon,
   Button,
   Dialog,
   Header,
   InfoIcon,
   Text,
+  Tooltip,
 } from "@fluentui/react-northstar";
 
 const getAllVariables = (code: string): string[] => {
@@ -91,8 +93,10 @@ export function TransformApp({
         style={{
           display: "flex",
           flexDirection: "column",
+          alignItems: "center",
           gap: 20,
           padding: 10,
+          paddingBottom: 40,
           width: 1200,
           maxWidth: "calc(100vw - 10px)",
         }}
@@ -141,10 +145,47 @@ export function TransformApp({
           <div />
           <Editor title={"Result"} code={result} />
         </div>
+        <ScrollToTopButton />
       </div>
     </VariablesContext.Provider>
   );
 }
+
+const ScrollToTopButton = () => {
+  const [showButton, setShowButton] = React.useState(false);
+
+  React.useEffect(() => {
+    window.addEventListener("scroll", () => {
+      if (window.pageYOffset > 300) {
+        setShowButton(true);
+      } else {
+        setShowButton(false);
+      }
+    });
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  return showButton ? (
+    <Tooltip
+      trigger={
+        <Button
+          icon={<ArrowUpIcon />}
+          iconOnly
+          title="Create"
+          onClick={scrollToTop}
+          style={{ position: "fixed", bottom: 60, left: "18%" }}
+        />
+      }
+      content="scroll to top"
+    />
+  ) : null;
+};
 
 const Help = () => (
   <div>
