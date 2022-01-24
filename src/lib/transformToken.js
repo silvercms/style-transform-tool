@@ -17,10 +17,7 @@ export const transformTokenInString = (userCode) => {
           // scheme.token found, try to locate the entire variable
           let start = index;
           while (start >= 1) {
-            if (
-              result.toLowerCase()[start - 1] === " " ||
-              result.toLowerCase()[start - 1] === "\n"
-            ) {
+            if (result.toLowerCase()[start - 1].match(/[^0-9a-z.]/)) {
               break;
             }
             start--;
@@ -29,7 +26,7 @@ export const transformTokenInString = (userCode) => {
           result =
             result.substring(0, start) +
             `tokens.${v0ToV9({ scheme, token })}` +
-            result.substring(end + 1);
+            result.substring(end);
           // check for next occurrence
           index = getFirstMatchIndex(result, scheme, token);
         }
@@ -42,7 +39,7 @@ export const transformTokenInString = (userCode) => {
 
 const getFirstMatchIndex = (userCode, scheme, token) => {
   const tokenString = `${scheme.toLowerCase()}.${token.toLowerCase()}`;
-  const tokenStringRegex = new RegExp(`${tokenString}(,|\\s)`);
+  const tokenStringRegex = new RegExp(`${tokenString}([^0-9a-z])`);
   const matches = userCode.toLowerCase().match(tokenStringRegex);
   if (matches?.length) {
     return matches.index;

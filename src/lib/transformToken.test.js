@@ -2,6 +2,11 @@ import { transformTokenInString } from "./transformToken";
 
 describe("transformTokenInString", () => {
   it("replace v0 token with v9", () => {
+    // simple match
+    expect(
+      transformTokenInString(`{color: default.foreground}`)
+    ).toMatchInlineSnapshot(`"{color: tokens.colorNeutralForeground1}"`);
+
     // two of the same token
     expect(
       transformTokenInString(`{
@@ -11,8 +16,8 @@ describe("transformTokenInString", () => {
     `)
     ).toMatchInlineSnapshot(`
 "{
-      color: tokens.colorNeutralForegroundInverted
-      \\"& svg\\": { fill: tokens.colorNeutralForegroundInverted},
+      color: tokens.colorNeutralForegroundInverted,
+      \\"& svg\\": { fill: tokens.colorNeutralForegroundInverted },
     }
     "
 `);
@@ -34,16 +39,16 @@ describe("transformTokenInString", () => {
       }`)
     ).toMatchInlineSnapshot(`
 "{
-        color: tokens.colorNeutralForeground1
-        background: tokens.colorNeutralBackground1
-        backgroundColor: tokens.colorNeutralBackground1
+        color: tokens.colorNeutralForeground1,
+        background: tokens.colorNeutralBackground1,
+        backgroundColor: tokens.colorNeutralBackground1,
         position: \\"absolute\\",
         left: \\"50%\\",
         top: \\"50%\\",
         transform: \\"translateX(-50%) translateY(-50%)\\",
         \\":hover\\": {
-          color: tokens.colorNeutralForeground2Hover
-          backgroundColor: tokens.colorNeutralBackground4Hover
+          color: tokens.colorNeutralForeground2Hover,
+          backgroundColor: tokens.colorNeutralBackground4Hover,
         },
       }"
 `);
