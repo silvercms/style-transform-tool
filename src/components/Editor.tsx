@@ -4,7 +4,14 @@ import Editor from "react-simple-code-editor";
 import Highlight, { defaultProps } from "prism-react-renderer";
 import theme from "prism-react-renderer/themes/vsLight";
 import { useAutoControlled } from "../hooks/useAutoControlled";
-import { teamsV2Theme } from "@fluentui/react-northstar";
+import {
+  AcceptIcon,
+  Button,
+  ClipboardCopiedToIcon,
+  teamsV2Theme,
+  Tooltip,
+} from "@fluentui/react-northstar";
+import useClipboard from "react-use-clipboard";
 
 // type from prism
 type StyleObj = {
@@ -65,12 +72,14 @@ const editorStyle = {
 export interface EditorWithLineNumProp {
   title?: string;
   code?: string;
+  showCopyButton?: boolean;
   onCodeChange?: (newCode: string) => void;
   TokenRenderer?: ComponentTokenRenderer;
 }
 
 const MyEditor = ({
   title,
+  showCopyButton,
   code,
   onCodeChange,
   TokenRenderer,
@@ -102,9 +111,11 @@ const MyEditor = ({
           fontSize: 16,
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
         {title ?? ""}
+        {showCopyButton && <CopyButton text={value} />}
       </div>
       <Editor
         value={value}
@@ -121,3 +132,29 @@ const MyEditor = ({
 MyEditor.displayName = "Editor";
 
 export { MyEditor as Editor };
+
+const CopyButton = ({ text }: { text: string }) => {
+  const [isCopied, setCopied] = useClipboard(text, {
+    successDuration: 3000,
+  });
+  return (
+    <Tooltip
+      trigger={
+        <Button
+          icon={
+            isCopied ? (
+              <AcceptIcon style={{ color: "green" }} />
+            ) : (
+              <ClipboardCopiedToIcon />
+            )
+          }
+          iconOnly
+          text
+          title="Create"
+          onClick={setCopied}
+        />
+      }
+      content={isCopied ? "copied 👍" : "copy code"}
+    />
+  );
+};

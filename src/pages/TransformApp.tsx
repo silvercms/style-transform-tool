@@ -143,7 +143,7 @@ export function TransformApp({
             TokenRenderer={ClickableVariablesRenderer}
           />
           <div />
-          <Editor title={"Result"} code={result} />
+          <Editor title={"Result"} code={result} showCopyButton />
         </div>
         <ScrollToTopButton />
       </div>
