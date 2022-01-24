@@ -4,6 +4,7 @@ import Editor from "react-simple-code-editor";
 import Highlight, { defaultProps } from "prism-react-renderer";
 import theme from "prism-react-renderer/themes/vsLight";
 import { useAutoControlled } from "../hooks/useAutoControlled";
+import { teamsV2Theme } from "@fluentui/react-northstar";
 
 // type from prism
 type StyleObj = {
@@ -57,18 +58,19 @@ const handleHighlight =
 
 const editorStyle = {
   fontFamily: '"Fira code", "Fira Mono", monospace',
-  outline: "1px solid",
-  minWidth: "40vw",
+  flexGrow: 1,
   ...theme.plain,
 };
 
 export interface EditorWithLineNumProp {
+  title?: string;
   code?: string;
   onCodeChange?: (newCode: string) => void;
   TokenRenderer?: ComponentTokenRenderer;
 }
 
 const MyEditor = ({
+  title,
   code,
   onCodeChange,
   TokenRenderer,
@@ -84,15 +86,36 @@ const MyEditor = ({
   };
 
   return (
-    <Editor
-      value={value}
-      onValueChange={handleValueChange}
-      highlight={handleHighlight(TokenRenderer)}
-      padding={10}
-      textareaId="codeArea"
-      className="editor"
-      style={editorStyle as React.CSSProperties}
-    />
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        border: `1px solid ${teamsV2Theme.siteVariables.colorScheme.default.background5}`,
+      }}
+    >
+      <div
+        style={{
+          backgroundColor:
+            teamsV2Theme.siteVariables.colorScheme.default.foreground5,
+          height: 40,
+          padding: 12,
+          fontSize: 16,
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        {title ?? ""}
+      </div>
+      <Editor
+        value={value}
+        onValueChange={handleValueChange}
+        highlight={handleHighlight(TokenRenderer)}
+        padding={10}
+        textareaId="codeArea"
+        className="editor"
+        style={editorStyle as React.CSSProperties}
+      />
+    </div>
   );
 };
 MyEditor.displayName = "Editor";

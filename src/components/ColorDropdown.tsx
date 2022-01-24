@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dropdown, DropdownProps } from "@fluentui/react-northstar";
+import { Dropdown, DropdownProps, Text } from "@fluentui/react-northstar";
 import {
   getTokensFromScheme,
   v0MappedSchemes,
@@ -18,7 +18,7 @@ export const ColorSchemeDropdown = ({
       alignItems: "start",
     }}
   >
-    color scheme:
+    <Text>color scheme:</Text>
     <Dropdown
       search
       items={v0MappedSchemes}
@@ -54,7 +54,7 @@ export const ColorTokenDropdown = ({
         alignItems: "start",
       }}
     >
-      token:
+      <Text>token:</Text>
       <Dropdown
         search
         items={tokens}

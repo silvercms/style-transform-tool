@@ -2,15 +2,15 @@ import * as React from "react";
 import {
   ColorSchemeDropdown,
   ColorTokenDropdown,
-} from "./components/ColorDropdown";
-import { ColorToken, ColorTokenValue } from "./components/ColorToken";
+} from "../components/ColorDropdown";
+import { ColorToken, ColorTokenValue } from "../components/ColorToken";
 import {
   getV0ColorValues,
   v0ToV9,
   getV9ColorValues,
   getTokensFromScheme,
   unifyColor,
-} from "./tokenMapping/getColorToken";
+} from "../tokenMapping/getColorToken";
 import { Divider, Header, Checkbox } from "@fluentui/react-northstar";
 
 export const ColorTokenApp = () => {

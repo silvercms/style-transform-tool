@@ -1,6 +1,6 @@
 import * as React from "react";
 import { ComponentTokenRenderer } from "./Editor";
-import { VariablesContext } from "../variablesContext";
+import { VariablesContext } from "../pages/variablesContext";
 
 export const ClickableVariablesRenderer: ComponentTokenRenderer = ({
   token,

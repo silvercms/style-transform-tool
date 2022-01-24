@@ -1,8 +1,23 @@
-import { teamsTheme, Provider, Divider } from "@fluentui/react-northstar";
+import { teamsTheme, Provider } from "@fluentui/react-northstar";
 import React from "react";
 import ReactDOM from "react-dom";
-import TransformApp from "./TransformApp";
-import { ColorTokenApp } from "./ColorTokenApp";
+import { BrowserRouter, useRoutes } from "react-router-dom";
+import { transformNameSpacedStyle } from "./loadBabel";
+import { ColorTokenApp, Home, TransformApp } from "./pages";
+
+const App = () => {
+  let routes = useRoutes([
+    { path: "/", element: <Home /> },
+    {
+      path: "transform",
+      element: (
+        <TransformApp transformNameSpacedStyle={transformNameSpacedStyle} />
+      ),
+    },
+    { path: "colors", element: <ColorTokenApp /> },
+  ]);
+  return routes;
+};
 
 ReactDOM.render(
   <React.StrictMode>
@@ -15,9 +30,9 @@ ReactDOM.render(
           alignItems: "center",
         }}
       >
-        <ColorTokenApp />
-        <Divider style={{ height: 80 }} />
-        <TransformApp />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </div>
     </Provider>
   </React.StrictMode>,
