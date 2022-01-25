@@ -7,8 +7,9 @@ index 2b1b3bb..a687703 100644
            },
          }),
 +      new webpack.DefinePlugin({
-+        process: { env: {} },
++        process: { env: JSON.stringify(process.env) },
 +      }),
      ].filter(Boolean),
      // Turn off performance processing because we utilize
      // our own hints via the FileSizeReporter
+u
