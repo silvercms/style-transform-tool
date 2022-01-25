@@ -32,9 +32,7 @@ export default function ({ types: t }) {
         slots.forEach((slot) => {
           const slotName = slot.node.key.name;
 
-          let slotStylesString = `
-            ${slotName}: {
-          `;
+          let slotStylesString = "";
 
           const variableProperties = slot.get("value").get("properties");
           variableProperties.forEach((variableProperty) => {
@@ -61,7 +59,9 @@ export default function ({ types: t }) {
             }
           });
 
-          slotStylesString = slotStylesString + "\n},";
+          slotStylesString = slotStylesString.trim().length
+            ? `\n${slotName}: {\n` + slotStylesString + "\n},"
+            : "";
           resultMakeStylesSource += slotStylesString;
         });
 

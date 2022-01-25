@@ -6,6 +6,7 @@ import theme from "prism-react-renderer/themes/vsLight";
 import { useAutoControlled } from "../hooks/useAutoControlled";
 import {
   AcceptIcon,
+  Alert,
   Button,
   ClipboardCopiedToIcon,
   teamsV2Theme,
@@ -76,6 +77,7 @@ export interface EditorWithLineNumProp {
   showCopyButton?: boolean;
   onCodeChange?: (newCode: string) => void;
   TokenRenderer?: ComponentTokenRenderer;
+  alert?: React.ReactChild;
 }
 
 const MyEditor = ({
@@ -85,6 +87,7 @@ const MyEditor = ({
   placeholderCode,
   onCodeChange,
   TokenRenderer,
+  alert,
 }: EditorWithLineNumProp) => {
   const [value, setValue] = useAutoControlled<string | undefined>({
     defaultValue: placeholderCode ?? "",
@@ -119,6 +122,7 @@ const MyEditor = ({
         {title ?? ""}
         {showCopyButton && value && <CopyButton text={value} />}
       </div>
+      {alert && <Alert warning content={alert} />}
       <Editor
         value={value ?? ""}
         onValueChange={handleValueChange}

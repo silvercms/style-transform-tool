@@ -1,3 +1,4 @@
+import { BabelFileResult } from "@babel/core";
 import * as Babel from "@babel/standalone";
 import { shorthands } from "@griffel/core";
 import { transformShorthands } from "./lib/shorthandsWorkaround";
@@ -14,7 +15,7 @@ export const allShorthandsKeys = Object.keys(shorthands);
 export type TransformNameSpacedStyle = (
   code: string,
   userVariables: string[]
-) => { code?: string; error?: string };
+) => { code?: string; hasMultiSlots?: boolean; error?: string };
 
 export const transformNameSpacedStyle: TransformNameSpacedStyle = (
   code: string,
@@ -39,13 +40,25 @@ export const transformNameSpacedStyle: TransformNameSpacedStyle = (
         ],
       ],
       highlightCode: false,
+      ast: true,
     });
+
     return {
       code: transformShorthands(resultFromBabel.code),
+      hasMultiSlots: isMultiSlot(resultFromBabel),
     };
   } catch (error) {
     return { error: (error as any)?.toString() };
   }
+};
+
+const isMultiSlot = ({ ast }: Pick<BabelFileResult, "ast">) => {
+  const slotsNum = (
+    ast?.program?.body?.filter(
+      (node) => node.type === "ExportNamedDeclaration"
+    )?.[0] as any
+  )?.declaration?.declarations?.[0]?.init?.arguments?.[0].properties?.length;
+  return slotsNum > 1;
 };
 
 /// ------------ below is used for transform shorthands in style object

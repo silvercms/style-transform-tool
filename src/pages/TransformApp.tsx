@@ -15,6 +15,7 @@ import {
   ArrowUpIcon,
   Button,
   Dialog,
+  ExclamationTriangleIcon,
   Header,
   InfoIcon,
   Text,
@@ -61,12 +62,14 @@ export function TransformApp({
 
   let allVariables: string[] = [];
   let result: string;
+  let showWarning = false;
 
   if (isUserCodeObject(userCode)) {
     result = transformShorthandsInStyleObject(transformTokenInString(userCode));
   } else {
     allVariables = getAllVariables(userCode);
     const transformed = transformNameSpacedStyle(userCode, selectedVariables);
+    showWarning = !!transformed.hasMultiSlots;
     result = transformed?.code ?? transformed?.error ?? "";
   }
 
@@ -143,7 +146,34 @@ export function TransformApp({
             placeholderCode={placeholderCode}
           />
           <div />
-          <Editor title={"Result"} code={result} showCopyButton />
+          <Editor
+            title={"Result"}
+            code={result}
+            showCopyButton
+            alert={
+              showWarning ? (
+                <Tooltip
+                  trigger={
+                    <div
+                      style={{ display: "flex", gap: 10, alignItems: "center" }}
+                    >
+                      <ExclamationTriangleIcon />
+                      Multiple slots detected. Slots can be different on
+                      converged component.
+                    </div>
+                  }
+                  content={
+                    <>
+                      You can get more information about converged components on{" "}
+                      <Text as="a" href={"https://aka.ms/fluentui-storybook"}>
+                        https://aka.ms/fluentui-storybook
+                      </Text>
+                    </>
+                  }
+                />
+              ) : undefined
+            }
+          />
         </div>
         <ScrollToTopButton />
       </div>
