@@ -6,19 +6,21 @@ import {
   transformNameSpacedStyle,
   transformShorthandsInStyleObject,
 } from "./loadBabel";
-import { ColorTokenApp, Home, TransformApp } from "./pages";
+import { ColorTokenApp, TransformApp } from "./pages";
+
+const Transform = () => (
+  <TransformApp
+    transformNameSpacedStyle={transformNameSpacedStyle}
+    transformShorthandsInStyleObject={transformShorthandsInStyleObject}
+  />
+);
 
 const App = () => {
   let routes = useRoutes([
-    { path: "/", element: <Home /> },
+    { path: "/", element: <Transform /> },
     {
       path: "transform",
-      element: (
-        <TransformApp
-          transformNameSpacedStyle={transformNameSpacedStyle}
-          transformShorthandsInStyleObject={transformShorthandsInStyleObject}
-        />
-      ),
+      element: <Transform />,
     },
     { path: "colors", element: <ColorTokenApp /> },
   ]);
