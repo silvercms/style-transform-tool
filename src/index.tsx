@@ -1,7 +1,7 @@
 import { teamsTheme, Provider } from "@fluentui/react-northstar";
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, useRoutes } from "react-router-dom";
+import { BrowserRouter, useRoutes, Navigate } from "react-router-dom";
 import {
   transformNameSpacedStyle,
   transformShorthandsInStyleObject,
@@ -23,6 +23,10 @@ const App = () => {
       element: <Transform />,
     },
     { path: "colors", element: <ColorTokenApp /> },
+    {
+      path: "*",
+      element: <Navigate to="/" />,
+    },
   ]);
   return routes;
 };
