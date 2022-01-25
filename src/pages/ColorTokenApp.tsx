@@ -11,7 +11,8 @@ import {
   getTokensFromScheme,
   unifyColor,
 } from "../tokenMapping/getColorToken";
-import { Divider, Header, Checkbox } from "@fluentui/react-northstar";
+import { Divider, Header, Checkbox, Button } from "@fluentui/react-northstar";
+import { Link } from "react-router-dom";
 
 export const ColorTokenApp = () => {
   const [scheme, setScheme] = React.useState("default");
@@ -24,7 +25,24 @@ export const ColorTokenApp = () => {
 
   return (
     <div style={{ paddingTop: 20 }}>
-      <Header as="h2" content={`v0 token ➡ v9 token`} />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          marginRight: "auto",
+          justifyContent: "space-between",
+          width: "100%",
+        }}
+      >
+        <Header as="h2" content={`v0 token ➡ v9 token`} />
+        <Link to="../transform">
+          <Button
+            text
+            content="convert tokens in styles"
+            style={{ textDecoration: "underline" }}
+          />
+        </Link>
+      </div>
 
       <div style={{ display: "flex", gap: 10 }}>
         <ColorSchemeDropdown setSelectedScheme={setScheme} />

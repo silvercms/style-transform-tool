@@ -21,6 +21,7 @@ import {
   Text,
   Tooltip,
 } from "@fluentui/react-northstar";
+import { Link } from "react-router-dom";
 
 const getAllVariables = (code: string): string[] => {
   const variables = new Set<string>();
@@ -108,7 +109,8 @@ export function TransformApp({
             alignItems: "center",
             marginRight: "auto",
             padding: 10,
-            gap: 80,
+            justifyContent: "space-between",
+            width: "100%",
           }}
         >
           <Text size="large">styles to makeStyles</Text>
@@ -128,6 +130,13 @@ export function TransformApp({
               onClick={showObjectExample}
             />
           </div>
+          <Link to="../colors">
+            <Button
+              text
+              content="View all color tokens"
+              style={{ textDecoration: "underline" }}
+            />
+          </Link>
         </div>
         <div
           style={{
