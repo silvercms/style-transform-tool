@@ -214,7 +214,7 @@ const ScrollToTopButton = () => {
           iconOnly
           title="Create"
           onClick={scrollToTop}
-          style={{ position: "fixed", bottom: 60, left: "18%" }}
+          style={{ position: "fixed", bottom: 60, left: "calc(50vw - 15px)" }}
         />
       }
       content="scroll to top"
