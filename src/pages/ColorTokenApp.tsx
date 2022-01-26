@@ -85,7 +85,10 @@ export const AllTokens = ({ scheme }: { scheme: string }) => {
 
   return (
     <>
-      <Header as="h2" content={`Token mapping in ${scheme} scheme:`} />
+      <Header
+        as="h2"
+        content={`Token mapping in ${scheme} scheme (light/dark/contrast): `}
+      />
       <Checkbox
         toggle
         label={<span>show only tokens mapped to different colors</span>}
