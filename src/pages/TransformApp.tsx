@@ -14,6 +14,7 @@ import {
 import {
   ArrowUpIcon,
   Button,
+  CloseIcon,
   Dialog,
   ExclamationTriangleIcon,
   Header,
@@ -115,12 +116,8 @@ export function TransformApp({
         >
           <Text size="large">styles to makeStyles</Text>
           <div style={{ display: "flex", gap: 10 }}>
-            <Dialog
-              trigger={
-                <Button icon={<InfoIcon />} text content="How it works?" />
-              }
-              content={<Help />}
-            />
+            <DialogHelper />
+
             <Button
               content="namespaced styles example"
               onClick={showNamespacedExample}
@@ -231,9 +228,30 @@ const ScrollToTopButton = () => {
   ) : null;
 };
 
+const DialogHelper = () => {
+  const [open, setOpen] = React.useState(false);
+  const onOpen = () => setOpen(true);
+  const closeDialog = () => setOpen(false);
+  return (
+    <Dialog
+      trigger={<Button icon={<InfoIcon />} text content="How it works?" />}
+      content={<Help />}
+      header="How it works"
+      onCancel={closeDialog}
+      onConfirm={closeDialog}
+      headerAction={{
+        icon: <CloseIcon />,
+        title: "Close",
+        onClick: closeDialog,
+      }}
+      onOpen={onOpen}
+      open={open}
+    />
+  );
+};
+
 const Help = () => (
   <div>
-    <Header as="h2" content="How it works" />
     You can transform <strong>namespaced styles file</strong> or replace color
     tokens in <strong>styles object</strong>.
     <Header as="h3" content="namespaced styles" />
