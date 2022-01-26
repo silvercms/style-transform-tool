@@ -10,7 +10,55 @@ plugins["babel-transform-namespaced-styles"] =
 plugins["babel-transform-shorthands"] =
   require("./lib/babel-transform-shorthands.js").default;
 
-export const allShorthandsKeys = Object.keys(shorthands);
+export const supportedShorthandsKeys = Object.keys(shorthands);
+
+console.log("supportedShorthandsKeys", supportedShorthandsKeys);
+
+// keys of griffel type GriffeltylesUnsupportedCSSProperties, i don't know how to get it as import :/
+export const allShorthandsKeys = [
+  "animation",
+  "background",
+  "border",
+  "borderBlock",
+  "borderBlockEnd",
+  "borderBlockStart",
+  "borderBottom",
+  "borderColor",
+  "borderImage",
+  "borderInline",
+  "borderInlineEnd",
+  "borderInlineStart",
+  "borderLeft",
+  "borderRadius",
+  "borderRight",
+  "borderStyle",
+  "borderTop",
+  "borderWidth",
+  "columnRule",
+  "flex",
+  "flexFlow",
+  "font",
+  "gap",
+  "grid",
+  "gridArea",
+  "gridColumn",
+  "gridGap",
+  "gridRow",
+  "gridTemplate",
+  "listStyle",
+  "margin",
+  "mask",
+  "maskBorder",
+  "offset",
+  "outline",
+  "overflow",
+  "padding",
+  "placeItems",
+  "placeSelf",
+  "textDecoration",
+  "textEmphasis",
+  "transition",
+];
 
 export type TransformNameSpacedStyle = (
   code: string,
@@ -35,6 +83,7 @@ export const transformNameSpacedStyle: TransformNameSpacedStyle = (
         [
           plugins["babel-transform-shorthands"],
           {
+            supportedShorthandsKeys,
             allShorthandsKeys,
           },
         ],
@@ -92,6 +141,7 @@ export const transformShorthandsInStyleObject: TransformShorthandsInStyleObject 
             [
               plugins["babel-transform-shorthands"],
               {
+                supportedShorthandsKeys,
                 allShorthandsKeys,
               },
             ],

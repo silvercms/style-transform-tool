@@ -304,6 +304,7 @@ const objectExample = `{
   top: "50%",
   overflow: "auto",
   transform: "translateX(-50%) translateY(-50%)",
+  textDecoration: "underline overline dotted",
   ":hover": {
     color: colorSchemeDefault.foregroundHover,
     backgroundColor: colorSchemeDefault.backgroundHover1,
