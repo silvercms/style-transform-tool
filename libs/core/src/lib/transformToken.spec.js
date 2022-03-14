@@ -1,9 +1,11 @@
-import { processedLightTheme, replaceTokens } from './siteVariables';
-const mapping = require('../mapping.json');
+import { replaceSiteVariblesToString, tokensV0toV9 } from './transformToken';
+import * as mapping from '../mapping.json';
+import { teamsV2Theme } from '@fluentui/react-northstar';
 
-describe('siteVariables.spec', () => {
-  it('processedLightTheme', () => {
-    expect(processedLightTheme.siteVariables).toMatchInlineSnapshot(`
+describe('transform', () => {
+  it('getThemeWithStringTokens', () => {
+    expect(replaceSiteVariblesToString(teamsV2Theme).siteVariables)
+      .toMatchInlineSnapshot(`
       Object {
         "__esModule": "siteVariables___esModule_true",
         "bodyBackground": "siteVariables_bodyBackground_#fff",
@@ -1546,17 +1548,29 @@ describe('siteVariables.spec', () => {
     `);
   });
 
-  it('replaceTokens', () => {
+  it('tokensV0toV9', () => {
     expect(mapping.default.foreground).toEqual('colorNeutralForeground1');
     expect(
-      replaceTokens(
+      tokensV0toV9(
         `1rem solid siteVariables_colorScheme_brand_foregroundDisabled1_#c7c7c7`
       )
-    ).toMatchInlineSnapshot(`"\`1rem solid #c7c7c7\`"`);
+    ).toMatchInlineSnapshot(`
+      Object {
+        "comments": Array [
+          " FIXME: ⚠️ No v9 matching found for token colorScheme.brand.foregroundDisabled1, using its value \`#c7c7c7\` as placeholder",
+        ],
+        "value": "\`1rem solid #c7c7c7\`",
+      }
+    `);
     expect(
-      replaceTokens(
+      tokensV0toV9(
         `1rem solid siteVariables_colorScheme_default_background_#fff`
       )
-    ).toMatchInlineSnapshot(`"\`1rem solid \${colorNeutralBackground1}\`"`);
+    ).toMatchInlineSnapshot(`
+      Object {
+        "comments": Array [],
+        "value": "\`1rem solid \${colorNeutralBackground1}\`",
+      }
+    `);
   });
 });

@@ -1,19 +1,22 @@
-const fs = require('fs');
+import * as fs from 'fs';
 import shakerEvaluator from '@linaria/shaker';
 import { Module } from '@linaria/babel-preset';
-import * as Babel from '@babel/standalone';
-import * as JSON5 from 'json5'; // json5 does not add quotes
 import {
-  transformShorthandsHelper,
-  transformShorthandsPlugin,
-} from '../babel-plugin';
+  getAllThemesStylesFiles,
+  getCurrentTMPtheme,
+  composeV9stylesCode,
+  getTMPsiteVariables,
+  findGitRoot,
+  tmpThemes,
+} from './multi-themes';
+import { transform } from './transform';
 import {
-  hasToken,
-  replaceTokens,
-  processedLightTheme,
-  namespaceTokensLight,
-} from './siteVariables';
+  replaceSiteVariblesToString,
+  makeNamespaceParms,
+} from './transformToken';
+import * as babelTSpresets from '@babel/preset-typescript';
 
+// linaria get styles start ---------
 const linariaOptions = {
   displayName: false,
   evaluate: true,
@@ -27,7 +30,7 @@ const linariaOptions = {
   babelOptions: {
     configFile: false,
     babelrc: false,
-    presets: ['@babel/typescript'],
+    presets: [babelTSpresets],
   },
 };
 
@@ -38,124 +41,211 @@ const getExport = (styleFilename, exportName) => {
   return mod.exports[exportName];
 };
 
-// style -----------
-
-const transformTokenPlugin = () => {
-  return {
-    visitor: {
-      StringLiteral(path) {
-        if (path.node.value && hasToken(path.node.value)) {
-          path.replaceWithSourceString(replaceTokens(path.node.value));
-        }
-      },
-    },
-  };
-};
-
-const transformTokenShorthands = (sourceCode) => {
-  const babelFileResult = Babel.transform(sourceCode, {
-    babelrc: false,
-    configFile: false,
-    plugins: [[transformTokenPlugin], [transformShorthandsPlugin]],
-  });
-
-  if (babelFileResult === null) {
-    throw new Error(`Failed to transform due to unknown Babel error...`);
-  }
-
-  return transformShorthandsHelper(babelFileResult.code);
-};
-
-const composeCodeFromMultiSlotStyles = (computedStyles) => {
-  let addSlotComments = Object.keys(computedStyles).length > 1;
-
-  let result = `export const useStyles = makeStyles({root: {`;
-  Object.entries(computedStyles).forEach(([slotName, styles]) => {
-    let stylesStr = JSON5.stringify(styles);
-    stylesStr = stylesStr.slice(1, stylesStr.length - 1);
-    if (stylesStr) {
-      if (addSlotComments) {
-        result += `\n// styles from ${slotName} slot (❗️ slots can be different on v9 components)\n`;
-      }
-      result += stylesStr + ',';
-    }
-  });
-  result += ` } })`;
-  return result;
-};
-
-export const transformFile = (
-  styleFilename,
-  exportName,
-  variables,
-  componentProps
-) => {
-  const exports = getExport(styleFilename, exportName);
-
-  // TODO!: get theme from TMP, or at least all siteVariables
-  const processedTheme = processedLightTheme; // TODO!: other theme
-
-  let computedStyles = {};
-  Object.keys(exports).forEach((slotName) => {
+const computeStyles =
+  ({ themeWithStringTokens, variables, componentProps }) =>
+  ({ computedStyles, themeName, slotName, exports }) => {
     const styleF = exports[slotName];
+
     if (styleF && typeof styleF === 'function') {
       const slotStyle = styleF({
         props: componentProps ?? {},
-        theme: processedTheme,
+        theme: themeWithStringTokens,
         variables,
       });
+
       if (Object.keys(slotStyle).length > 0) {
-        computedStyles[slotName] = slotStyle;
+        computedStyles[slotName] = computedStyles[slotName] ?? {};
+        computedStyles[slotName][themeName] = slotStyle;
       }
     }
-  });
-
-  return transformTokenShorthands(
-    composeCodeFromMultiSlotStyles(computedStyles)
-  );
-};
-
-export const transformNamespacedFile = (
-  styleFilename,
-  exportName,
-  variable,
-  variableProps
-) => {
-  const exports = getExport(styleFilename, exportName);
-
-  let computedStyles = {};
-  Object.keys(exports).forEach((slotName) => {
+  };
+const computedNamespacedStyles =
+  ({ namespaceParmsWithStringTokens, variable, variableProps }) =>
+  ({ computedStyles, themeName, slotName, exports }) => {
     const styleF = exports[slotName][variable];
+
     if (styleF && typeof styleF === 'function') {
-      namespaceTokensLight.variableProps = variableProps;
-      const slotStyle = styleF(namespaceTokensLight);
-      namespaceTokensLight.variableProps = undefined;
+      namespaceParmsWithStringTokens.variableProps = variableProps;
+      const slotStyle = styleF(namespaceParmsWithStringTokens);
+
       if (Object.keys(slotStyle).length > 0) {
-        computedStyles[slotName] = slotStyle;
+        computedStyles[slotName] = computedStyles[slotName] ?? {};
+        computedStyles[slotName][themeName] = slotStyle;
       }
     }
-  });
+  };
+// linaria get styles end ---------
 
-  return transformTokenShorthands(
-    composeCodeFromMultiSlotStyles(computedStyles)
-  );
-};
+// multi-theme handling start ---------
 
-// const styleFilename =
-//   '/Users/yuanboxue/dev/TMP/t2/teams-modular-packages/packages/components/components-teams-stardust-ui/src/themes/teams/components/Slider/slider-styles.ts';
+// Compute styles and assign to computedStyles[slotName][themeName]
+const computeStylesForOneTheme =
+  ({ gitRoot, themeName, currentThemeStylesFile, exportName }) =>
+  ({
+    isNamespaced,
+    // namespaced
+    variable,
+    variableProps,
+    // non-namespaced
+    variables,
+    componentProps,
+  }) =>
+  (computedStyles) => {
+    const themeWithStringTokens = replaceSiteVariblesToString({
+      siteVariables: getTMPsiteVariables({ gitRoot, themeName }) ?? {},
+    });
 
-// console.log(
-//   transformFile(styleFilename, 'sliderStyles', {
-//     isCallingVolumeSliderDisabled: true,
-//     isCallingPreJoinV2ComputerAudioVolumeSlider: true,
-//   })
-// );
+    const currentThemeStylesFileExports = getExport(
+      currentThemeStylesFile,
+      exportName
+    );
 
-// const styleFilename =
-//   '/Users/yuanboxue/dev/TMP/t2/teams-modular-packages/packages/components/components-teams-stardust-ui/src/themes/teams/components/Card/card-namespace-edu.ts';
+    Object.keys(currentThemeStylesFileExports).forEach((slotName) => {
+      const computeFunc = isNamespaced
+        ? computedNamespacedStyles({
+            namespaceParmsWithStringTokens: makeNamespaceParms(
+              themeWithStringTokens
+            ),
+            variable,
+            variableProps,
+          })
+        : computeStyles({
+            themeWithStringTokens,
+            variables,
+            componentProps,
+          });
+      computeFunc({
+        computedStyles,
+        themeName,
+        slotName,
+        exports: currentThemeStylesFileExports,
+      });
+    });
+  };
 
-// console.log(
-//   transformFile(styleFilename, 'default', {
-//     gridViewTeamCard: true,
-//   })
-// );
+const computeAllThemes =
+  ({ gitRoot, inputFilename, exportName }) =>
+  ({
+    isNamespaced,
+    // namespaced
+    variable,
+    variableProps,
+    // non-namespaced
+    variables,
+    componentProps,
+  }) => {
+    // get style files in all themes
+    const allThemesStylesFiles = getAllThemesStylesFiles({
+      gitRoot,
+      filename: inputFilename,
+    });
+
+    // compute all styles
+    const computedStyles = {};
+
+    Object.keys(allThemesStylesFiles).forEach((themeName) => {
+      const currentThemeStylesFile = allThemesStylesFiles[themeName];
+      if (!currentThemeStylesFile) {
+        return;
+      }
+
+      computeStylesForOneTheme({
+        gitRoot,
+        themeName,
+        currentThemeStylesFile,
+        exportName,
+      })({
+        isNamespaced,
+        // namespaced
+        variable,
+        variableProps,
+        // non-namespaced
+        variables,
+        componentProps,
+      })(computedStyles);
+    });
+
+    return computedStyles;
+  };
+
+const computeCurrentTheme =
+  ({ gitRoot, inputFilename, exportName }) =>
+  ({
+    isNamespaced,
+    // namespaced
+    variable,
+    variableProps,
+    // non-namespaced
+    variables,
+    componentProps,
+  }) => {
+    // guess current theme
+    const themeName = getCurrentTMPtheme(inputFilename);
+    if (tmpThemes[themeName] === undefined) {
+      throw new Error(`Detect the current theme is ${themeName}, which is not a valid TMP theme.
+  The value must be one of: teams, teams-tfl, teams-v2, teams-dark, teams-dark-tfl, teams-dark-v2, teams-hight-contrast`);
+    }
+
+    // compute styles
+    const computedStyles = {};
+
+    computeStylesForOneTheme({
+      gitRoot,
+      themeName,
+      currentThemeStylesFile: inputFilename,
+      exportName,
+    })({
+      isNamespaced,
+      // namespaced
+      variable,
+      variableProps,
+      // non-namespaced
+      variables,
+      componentProps,
+    })(computedStyles);
+
+    return computedStyles;
+  };
+
+// multi-theme handling end ---------
+
+export const main =
+  ({ inputFilename, exportName, isTransformAllThemes }) =>
+  ({
+    isNamespaced,
+    // namespaced
+    variable,
+    variableProps,
+    // non-namespaced
+    variables,
+    componentProps,
+  }) => {
+    // find git root
+    const gitRoot = findGitRoot(inputFilename);
+    if (!gitRoot) {
+      throw new Error(
+        `unable to find workspace root from specified file name ${inputFilename}`
+      );
+    }
+
+    const computeStylesFunc = isTransformAllThemes
+      ? computeAllThemes
+      : computeCurrentTheme;
+
+    const computedStylesObject = computeStylesFunc({
+      gitRoot,
+      inputFilename,
+      exportName,
+    })({
+      isNamespaced,
+      // namespaced
+      variable,
+      variableProps,
+      // non-namespaced
+      variables,
+      componentProps,
+    });
+
+    const v9StylesCode = composeV9stylesCode(computedStylesObject);
+    return transform(v9StylesCode);
+  };

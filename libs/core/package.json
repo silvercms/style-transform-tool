@@ -1,8 +1,11 @@
 {
-  "name": "@fluentui-style-transform/core",
-  "version": "0.0.1",
+  "name": "v9helper",
+  "version": "0.0.1-20220304.2",
   "main": "src/index.js",
   "bin": {
-    "ambertest": "./dist/src/cli/index.js"
+    "v9helper": "src/cli/index.js"
+  },
+  "dependencies": {
+    "@babel/preset-typescript": "^7.16.7"
   }
 }

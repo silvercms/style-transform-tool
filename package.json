@@ -5,11 +5,14 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
-    "test": "nx test"
+    "test": "nx test",
+    "install:cli": "nx build:cli core && cd dist/libs/v9helper && npm install -g .",
+    "publish:cli": "nx build:cli core && npm publish dist/libs/v9helper --tag testing-new-feature"
   },
   "private": true,
   "dependencies": {
     "@babel/core": "^7.17.5",
+    "@babel/preset-typescript": "^7.16.7",
     "@babel/standalone": "^7.17.6",
     "@babel/template": "^7.16.7",
     "@babel/types": "^7.17.0",
@@ -19,6 +22,7 @@
     "@linaria/shaker": "^3.0.0-beta.15",
     "@nrwl/node": "^13.8.3",
     "core-js": "^3.6.5",
+    "lodash": "^4.17.21",
     "prism-react-renderer": "^1.3.1",
     "prompts": "^2.4.2",
     "react": "17.0.2",
@@ -45,6 +49,7 @@
     "@types/babel__standalone": "^7.1.4",
     "@types/jest": "27.0.2",
     "@types/node": "16.11.7",
+    "@types/prompts": "^2.0.14",
     "@types/react": "17.0.30",
     "@types/react-dom": "17.0.9",
     "@typescript-eslint/eslint-plugin": "~5.10.0",
