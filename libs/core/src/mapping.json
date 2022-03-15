@@ -92,5 +92,22 @@
     "border": "colorNeutralStroke2",
     "borderActive": "colorNeutralStroke1Selected",
     "borderFocusWithin": "colorStrokeFocus1"
+  },
+  "pink": {
+    "foreground": "colorPaletteBerryForeground1",
+    "background": "colorPaletteBerryBackground1",
+    "border": "colorPaletteBerryBorder1",
+    "foreground1": "colorPaletteBerryForeground3"
+  },
+  "green": {
+    "background": "colorPaletteGreenBackground3",
+    "border": "colorPaletteGreenBorder1",
+    "background2": "colorPaletteGreenBackground1",
+    "foreground2": "colorPaletteGreenForeground3"
+  },
+  "yellow": {
+    "foreground": "colorPaletteYellowForeground3",
+    "background": "colorPaletteYellowBackground2",
+    "border": "colorPaletteYellowBorder1"
   }
 }
