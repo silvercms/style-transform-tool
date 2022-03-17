@@ -86,7 +86,10 @@ const questions = [
     '⚠️ The tool transforms v2 theme only. Double check colors if your experience is NOT multi-window or react-web-client.'
   );
   const response = await prompts(questions);
-  if (!validate(response)) {
+
+  const err = validate(response);
+  if (err.length) {
+    console.log(err);
     return;
   }
 
@@ -134,16 +137,16 @@ const questions = [
 
 const validate = ({ filename, variables, namespacedVariable }) => {
   if (!filename) {
-    return false;
+    return 'invalid filename';
   }
 
   if (isNamespaced(filename)) {
-    if (!variables) {
-      return false;
+    if (!namespacedVariable) {
+      return 'invalid variable';
     }
-  } else if (!namespacedVariable) {
-    return false;
+  } else if (!variables) {
+    return 'invalid variables';
   }
 
-  return true;
+  return '';
 };
