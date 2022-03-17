@@ -21,7 +21,10 @@ export const transformShorthandsPlugin = ({ types: t }) => {
                     .split(' ')
                     .map((token) => `"${token.trim()}"`)
                     .join(', ')})`;
-                } else if (t.isMemberExpression(value)) {
+                } else if (
+                  t.isMemberExpression(value) ||
+                  t.isNumericLiteral(value)
+                ) {
                   newSource = `${SHORTHANDS_KEYWORD_FOR_EASY_REPLACE}.${keyName}(${value.toString()})`;
                 } else if (t.isTemplateLiteral(value)) {
                   const currSource = value.toString();
