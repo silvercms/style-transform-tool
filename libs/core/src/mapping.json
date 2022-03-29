@@ -109,5 +109,9 @@
     "foreground": "colorPaletteYellowForeground3",
     "background": "colorPaletteYellowBackground2",
     "border": "colorPaletteYellowBorder1"
+  },
+  "orange": {
+    "background": "colorPaletteDarkOrangeBackground3",
+    "border": "colorNeutralStroke1Selected"
   }
 }
