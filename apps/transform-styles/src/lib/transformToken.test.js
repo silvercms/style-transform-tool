@@ -1,7 +1,7 @@
-import { transformTokenInString } from "./transformToken";
+import { transformTokenInString } from './transformToken';
 
-describe("transformTokenInString", () => {
-  it("replace v0 token with v9", () => {
+describe('transformTokenInString', () => {
+  it('replace v0 token with v9', () => {
     // simple match
     expect(
       transformTokenInString(`{color: default.foreground}`)
@@ -16,8 +16,8 @@ describe("transformTokenInString", () => {
     `)
     ).toMatchInlineSnapshot(`
 "{
-      color: tokens.colorNeutralForegroundInverted,
-      \\"& svg\\": { fill: tokens.colorNeutralForegroundInverted },
+      color: tokens.colorNeutralForegroundOnBrand,
+      \\"& svg\\": { fill: tokens.colorNeutralForegroundOnBrand },
     }
     "
 `);

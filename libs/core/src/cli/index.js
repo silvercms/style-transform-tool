@@ -80,6 +80,11 @@ const questions = [
   },
 ];
 
+// function hrToSeconds(hrtime) {
+//   const raw = hrtime[0] + hrtime[1] / 1e9;
+//   return raw.toFixed(2) + 's';
+// }
+
 // TODO show a progress bar, cache theme
 (async () => {
   console.log(
@@ -103,6 +108,15 @@ const questions = [
     isTransformAllThemes,
   } = response;
 
+  // for debug
+  // {
+  //   filename:
+  //     '/Users/yuanboxue/dev/TMP/t2/teams-modular-packages/packages/components/components-teams-stardust-ui/src/themes/teams/components/Avatar/avatar-styles.ts',
+  //   exportName: 'avatarStyles',
+  //   variables: ['isHiddenParticipantsCounter', 'isCallingScreenAvatar'],
+  //   isTransformAllThemes: false,
+  // };
+
   const styleFilename = path.resolve(filename.trim());
 
   const isNamespacedFile = isNamespaced(filename);
@@ -116,6 +130,7 @@ const questions = [
     });
   }
 
+  // const startT = process.hrtime();
   const result = main({
     inputFilename: styleFilename,
     exportName,
@@ -131,6 +146,9 @@ const questions = [
     variables: variablesObject,
     componentProps,
   });
+
+  // const endT = process.hrtime(startT);
+  // console.log('main', hrToSeconds(endT));
 
   console.log(result);
 })();

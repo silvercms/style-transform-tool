@@ -1569,7 +1569,7 @@ describe('transform', () => {
     ).toMatchInlineSnapshot(`
       Object {
         "comments": Array [],
-        "value": "\`1rem solid \${colorNeutralBackground1}\`",
+        "value": "\`1rem solid \${tokens.colorNeutralBackground1}\`",
       }
     `);
   });
