@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter, useRoutes, Navigate } from 'react-router-dom';
 import {
   transformNameSpacedStyle,
-  transformShorthandsInStyleObject,
+  transformStylesObject,
   getAllVariables,
 } from './loadBabel';
 import { ColorTokenApp, TransformApp } from './pages';
@@ -12,7 +12,7 @@ import { ColorTokenApp, TransformApp } from './pages';
 const Transform = () => (
   <TransformApp
     transformNameSpacedStyle={transformNameSpacedStyle}
-    transformShorthandsInStyleObject={transformShorthandsInStyleObject}
+    transformStylesObject={transformStylesObject}
     getAllVariables={getAllVariables}
   />
 );

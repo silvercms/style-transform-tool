@@ -1,4 +1,4 @@
-import * as mapping from '../mapping.json';
+import { mapping } from '../mapping';
 
 // recursively iterate thru an object, replace the value into key_value string
 const valueToString = (object, result, prefix = '') => {

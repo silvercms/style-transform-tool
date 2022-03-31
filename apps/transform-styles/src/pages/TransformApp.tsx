@@ -2,12 +2,7 @@ import * as React from 'react';
 import { Editor } from '../components/Editor';
 import { VariablesContext } from './variablesContext';
 import { ClickableVariablesRenderer } from '../components/ClickableVariablesRenderer';
-import { transformTokenInString } from '../lib/transformToken';
-import {
-  isUserCodeObject,
-  TransformNameSpacedStyle,
-  TransformShorthandsInStyleObject,
-} from '../loadBabel';
+import { isUserCodeObject, TransformNameSpacedStyle } from '../loadBabel';
 import {
   ArrowUpIcon,
   Button,
@@ -23,11 +18,11 @@ import { Link } from 'react-router-dom';
 
 export function TransformApp({
   transformNameSpacedStyle,
-  transformShorthandsInStyleObject,
+  transformStylesObject,
   getAllVariables,
 }: {
   transformNameSpacedStyle: TransformNameSpacedStyle;
-  transformShorthandsInStyleObject: TransformShorthandsInStyleObject;
+  transformStylesObject: (userCode: string) => string;
   getAllVariables: (code: string) => string[];
 }) {
   const [userCode, setUserCode] = React.useState<string>(placeholderCode);
@@ -40,7 +35,7 @@ export function TransformApp({
   let showWarning = false;
 
   if (isUserCodeObject(userCode)) {
-    result = transformShorthandsInStyleObject(transformTokenInString(userCode));
+    result = transformStylesObject(userCode);
   } else {
     allVariables = getAllVariables(userCode);
     const transformed = transformNameSpacedStyle(userCode, selectedVariables);

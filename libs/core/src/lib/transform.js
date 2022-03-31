@@ -3,7 +3,7 @@ import { hasToken, tokensV0toV9 } from './transformToken';
 import {
   transformShorthandsHelper,
   transformShorthandsPlugin,
-} from '../babel-plugin-shorthands';
+} from 'v9helper-babel-plugin-shorthands';
 
 const transformTokenPlugin = () => {
   return {

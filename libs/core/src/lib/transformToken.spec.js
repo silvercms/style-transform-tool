@@ -1,5 +1,5 @@
 import { replaceSiteVariblesToString, tokensV0toV9 } from './transformToken';
-import * as mapping from '../mapping.json';
+import { mapping } from '../mapping';
 import { teamsV2Theme } from '@fluentui/react-northstar';
 
 describe('transform', () => {

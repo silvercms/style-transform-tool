@@ -9,7 +9,11 @@ import type {
 import {
   transformShorthandsHelper,
   transformShorthandsPlugin,
-} from '@fluentui-style-transform/babel-transform-shorthands';
+} from 'v9helper-babel-plugin-shorthands';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const helper = require('v9helper-transform-style-object');
+export const transformStylesObject = helper.transformStylesObject;
 
 export const plugins: any = {};
 
@@ -104,32 +108,3 @@ const removeCommentsFromStyleObject = (userCode: string) =>
     .filter((line) => !line.trim().startsWith('//'))
     .join('\n')
     .trim();
-
-export type TransformShorthandsInStyleObject = (code: string) => string;
-export const transformShorthandsInStyleObject: TransformShorthandsInStyleObject =
-  (code) => {
-    try {
-      const resultFromBabel = Babel.transform(
-        `export const useStyles = makeStyles({special_root: \n ${code}})`,
-        {
-          filename: 'styles.ts',
-          presets: ['typescript'],
-          plugins: [[plugins['babel-transform-shorthands']]],
-          highlightCode: false,
-        }
-      );
-
-      const extractStyleObject =
-        resultFromBabel.code &&
-        transformShorthandsHelper(
-          resultFromBabel.code.slice(
-            resultFromBabel.code.indexOf('special_root:') +
-              'special_root:'.length,
-            resultFromBabel.code.length - 3
-          )
-        );
-      return extractStyleObject ?? code;
-    } catch (error) {
-      return code;
-    }
-  };

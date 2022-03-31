@@ -15,11 +15,15 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@fluentui-style-transform/babel-transform-shorthands": [
-        "libs/core/src/babel-plugin-shorthands/index.js"
-      ],
+      "../mapping.json": ["libs/mapping.json"],
+      "v9helper-tokenMapping": ["libs/mapping.json"],
       "v9helper": ["libs/core/src/index.js"],
-      "@fluentui-style-transform/tokenMapping": ["libs/core/src/mapping.json"]
+      "v9helper-babel-plugin-shorthands": [
+        "libs/babel-plugin-shorthands/src/index.js"
+      ],
+      "v9helper-transform-style-object": [
+        "dist/libs/transform-style-object/src/index.js"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

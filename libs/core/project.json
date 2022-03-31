@@ -11,7 +11,7 @@
         "tsConfig": "libs/core/tsconfig.lib.json",
         "packageJson": "libs/core/package.json",
         "main": "libs/core/src/index.js",
-        "assets": ["libs/core/*.md"]
+        "assets": ["libs/core/*.md", "libs/mapping.json"]
       }
     },
     "build:cli": {
@@ -23,7 +23,11 @@
         }
       ],
       "options": {
-        "commands": [{ "command": "chmod -R 755 dist/libs/v9helper" }]
+        "commands": [
+          {
+            "command": "chmod -R 755 dist/libs/v9helper && mkdir dist/libs/v9helper/node_modules && cp -r dist/libs/babel-plugin-shorthands dist/libs/v9helper/node_modules/v9helper-babel-plugin-shorthands"
+          }
+        ]
       }
     },
     "lint": {
