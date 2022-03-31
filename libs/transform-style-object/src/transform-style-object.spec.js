@@ -18,6 +18,11 @@ describe('transformStyleObject', () => {
           color: colorSchemeDefault.foregroundHover,
           backgroundColor: colorSchemeDefault.backgroundHover1,
         },
+        ":active": {
+          backgroundColor: isPositive
+            ? colors.grey["250"]
+            : colorSchemeBrand.borderPressed,
+        },
       }`)
     ).toMatchInlineSnapshot(`
       " {
@@ -35,6 +40,10 @@ describe('transformStyleObject', () => {
           \\":hover\\": {
             color: tokens.colorNeutralForeground2Hover,
             backgroundColor: tokens.colorNeutralBackground4Hover
+          },
+          \\":active\\": {
+            // FIXME: ❌ No v9 matching found for token colorSchemeBrand.borderPressed
+            backgroundColor: isPositive ? colors.grey[\\"250\\"] : colorSchemeBrand.borderPressed
           }
         }
       "

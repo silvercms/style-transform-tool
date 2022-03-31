@@ -5,53 +5,62 @@ import {
 } from 'v9helper-babel-plugin-shorthands';
 import { mapping } from './mapping';
 
-const v0MappedSchemes = Object.keys(mapping);
-
 const v0ToV9 = ({ scheme, token }) => mapping[`${scheme}`]?.[`${token}`];
 
-const getTokensFromScheme = (scheme) => Object.keys(mapping[`${scheme}`] ?? {});
+const ALL_SCHEMES = [
+  'default',
+  'brand',
+  'black',
+  'white',
+  'green',
+  'orange',
+  'pink',
+  'red',
+  'yellow',
+  'silver',
+  'onyx',
+  'amethyst',
+];
 
-const getFirstMatchIndex = (userCode, scheme, token) => {
-  const tokenString = `${scheme.toLowerCase()}.${token.toLowerCase()}`;
-  const tokenStringRegex = new RegExp(`${tokenString}([^0-9a-z])`);
-  const matches = userCode.toLowerCase().match(tokenStringRegex);
-  if (matches?.length) {
-    return matches.index;
-  }
-  return -1;
-};
-
-const transformTokenInString = (userCode) => {
-  let result = userCode;
-
-  v0MappedSchemes.forEach((scheme) => {
-    if (result.toLowerCase().includes(`${scheme.toLowerCase()}.`)) {
-      // scheme found
-      const tokens = getTokensFromScheme(scheme);
-      tokens.forEach((token) => {
-        let index = getFirstMatchIndex(result, scheme, token);
-        while (index >= 0) {
-          // scheme.token found, try to locate the entire variable
-          let start = index;
-          while (start >= 1) {
-            if (result.toLowerCase()[start - 1].match(/[^0-9a-z.]/)) {
-              break;
+export const transformTokenPlugin = ({ types: t }) => {
+  return {
+    visitor: {
+      ExportNamedDeclaration(path) {
+        t.assertVariableDeclaration(path.node.declaration);
+        t.assertVariableDeclarator(path.node.declaration.declarations[0]);
+        path.traverse({
+          MemberExpression(path) {
+            const key = path.get('object');
+            const value = path.get('property');
+            if (t.isIdentifier(key) && t.isIdentifier(value)) {
+              const scheme = ALL_SCHEMES.find((schemeName) =>
+                key.node.name.toLowerCase().includes(schemeName)
+              );
+              if (scheme) {
+                const token = value.node.name;
+                const v9token = v0ToV9({ scheme, token });
+                if (v9token) {
+                  path.replaceWithSourceString(`tokens.${v9token}`);
+                } else {
+                  let parent = path.parentPath;
+                  while (parent && !t.isObjectProperty(parent)) {
+                    parent = parent.parentPath;
+                  }
+                  if (parent) {
+                    parent.addComment(
+                      'leading',
+                      ` FIXME: ❌ No v9 matching found for token ${path.toString()}`,
+                      true
+                    );
+                  }
+                }
+              }
             }
-            start--;
-          }
-          const end = index + `${scheme}.${token}`.length;
-          result =
-            result.substring(0, start) +
-            `tokens.${v0ToV9({ scheme, token })}` +
-            result.substring(end);
-          // check for next occurrence
-          index = getFirstMatchIndex(result, scheme, token);
-        }
-      });
-    }
-  });
-
-  return result;
+          },
+        });
+      },
+    },
+  };
 };
 
 const transformShorthandsInStyleObject = (code) => {
@@ -63,7 +72,7 @@ const transformShorthandsInStyleObject = (code) => {
         configFile: false,
         filename: 'styles.ts',
         presets: ['typescript'],
-        plugins: [[transformShorthandsPlugin]],
+        plugins: [[transformTokenPlugin], [transformShorthandsPlugin]],
       }
     );
 
@@ -100,7 +109,7 @@ const removeCommentsFromStyleObject = (userCode) =>
 
 export function transformStylesObject(userCode) {
   if (isUserCodeObject(userCode)) {
-    return transformShorthandsInStyleObject(transformTokenInString(userCode));
+    return transformShorthandsInStyleObject(userCode);
   }
   return userCode;
 }
