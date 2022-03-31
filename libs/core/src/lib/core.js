@@ -16,6 +16,11 @@ import {
 } from './transformToken';
 import * as babelTSpresets from '@babel/preset-typescript';
 
+// const hrToSeconds = (hrtime) => {
+//   const raw = hrtime[0] + hrtime[1] / 1e9;
+//   return raw.toFixed(2) + 's';
+// };
+
 // linaria get styles start ---------
 const linariaOptions = {
   displayName: false,
@@ -25,6 +30,26 @@ const linariaOptions = {
     {
       test: /[/\\]node_modules[/\\]/,
       action: 'ignore',
+    },
+    {
+      test: /[/\\]theme-namespace-helper/,
+      action: (_filename, _options, _text, _only) => {
+        return [
+          `"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getOverrideFn = void 0;
+
+var getOverrideFn = function getOverrideFn() {
+  return function () {};
+};
+
+exports.getOverrideFn = getOverrideFn;`,
+          null,
+        ];
+      },
     },
   ],
   babelOptions: {
@@ -91,29 +116,37 @@ const computeStylesForOneTheme =
     componentProps,
   }) =>
   (computedStyles) => {
-    const themeWithStringTokens = replaceSiteVariblesToString({
+    // let startT = process.hrtime();
+    const tmpTheme = {
       siteVariables: getTMPsiteVariables({ gitRoot, themeName }) ?? {},
-    });
+    };
+    // console.log(
+    //   'computeStylesForOneTheme',
+    //   'getTMPsiteVariables',
+    //   hrToSeconds(process.hrtime(startT))
+    // );
+
+    const themeWithStringTokens = replaceSiteVariblesToString(tmpTheme);
 
     const currentThemeStylesFileExports = getExport(
       currentThemeStylesFile,
       exportName
     );
 
+    const computeFunc = isNamespaced
+      ? computedNamespacedStyles({
+          namespaceParmsWithStringTokens: makeNamespaceParms(
+            themeWithStringTokens
+          ),
+          variable,
+          variableProps,
+        })
+      : computeStyles({
+          themeWithStringTokens,
+          variables,
+          componentProps,
+        });
     Object.keys(currentThemeStylesFileExports).forEach((slotName) => {
-      const computeFunc = isNamespaced
-        ? computedNamespacedStyles({
-            namespaceParmsWithStringTokens: makeNamespaceParms(
-              themeWithStringTokens
-            ),
-            variable,
-            variableProps,
-          })
-        : computeStyles({
-            themeWithStringTokens,
-            variables,
-            componentProps,
-          });
       computeFunc({
         computedStyles,
         themeName,
@@ -247,5 +280,7 @@ export const main =
     });
 
     const v9StylesCode = composeV9stylesCode(computedStylesObject);
-    return transform(v9StylesCode);
+    const result = transform(v9StylesCode);
+
+    return result;
   };
