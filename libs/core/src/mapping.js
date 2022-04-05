@@ -1,3 +1,3 @@
-import * as mapping from '../mapping.json';
+import mapping from '../mapping.json';
 
 export { mapping };

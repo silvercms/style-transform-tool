@@ -1,6 +1,6 @@
 {
   "name": "v9helper",
-  "version": "0.0.1-20220404.4",
+  "version": "0.0.3",
   "main": "src/index.js",
   "sideEffects": false,
   "bin": {

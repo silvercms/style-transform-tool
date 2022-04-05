@@ -1,4 +1,4 @@
-import * as JSON5 from 'json5';
+import JSON5 from 'json5';
 
 const styleObjectToString = (obj) => {
   let stylesStr = JSON5.stringify(obj); // JSON5 does not add quotes on key

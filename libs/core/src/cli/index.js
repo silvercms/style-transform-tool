@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 process.env.NODE_ENV = process.env.NODE_ENV ?? 'production';
-import * as prompts from 'prompts';
-import * as path from 'path';
-import * as JSON5 from 'json5'; // json5 can parse without quotes
+import prompts from 'prompts';
+import path from 'path';
+import JSON5 from 'json5'; // json5 can parse without quotes
 import { isNamespaced } from '../lib/multi-themes';
 import { main } from '../lib/core';
 
