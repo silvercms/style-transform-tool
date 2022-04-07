@@ -3,7 +3,8 @@ import { transformStylesObject } from './transform-style-object';
 describe('transformStyleObject', () => {
   it('should work', () => {
     expect(
-      transformStylesObject(`{
+      transformStylesObject(`{ 
+        overflow: isScroll ? 'scroll' : isHidden ? 'hidden' : "auto", 
         color: colorSchemeDefault.foreground,
         background: colorSchemeDefault.background,
         backgroundColor: colorSchemeDefault.background,
@@ -25,7 +26,8 @@ describe('transformStyleObject', () => {
         },
       }`)
     ).toMatchInlineSnapshot(`
-      " {
+      " { // FIXME: ❌ Conditional expression detected. Only static values are allowed in makeStyles; please create separate slots for each condition and apply them using \`mergeClasses\`
+          ...shorthands.overflow(isScroll ? 'scroll' : isHidden ? 'hidden' : \\"auto\\"),
           color: tokens.colorNeutralForeground1,
           backgroundColor: tokens.colorNeutralBackground1,
           backgroundColor: tokens.colorNeutralBackground1,
@@ -43,6 +45,7 @@ describe('transformStyleObject', () => {
           },
           \\":active\\": {
             // FIXME: ❌ No v9 matching found for token colorSchemeBrand.borderPressed
+            // FIXME: ❌ Conditional expression detected. Only static values are allowed in makeStyles; please create separate slots for each condition and apply them using \`mergeClasses\`
             backgroundColor: isPositive ? colors.grey[\\"250\\"] : colorSchemeBrand.borderPressed
           }
         }

@@ -22,7 +22,9 @@ const ALL_SCHEMES = [
   'amethyst',
 ];
 
+// transform token + add FIXME comment in conditional expression
 export const transformTokenPlugin = ({ types: t }) => {
+  const visitedConditionalExpression = []; // prevent adding duplicated FIXME comments on conditional expression
   return {
     visitor: {
       ExportNamedDeclaration(path) {
@@ -55,6 +57,24 @@ export const transformTokenPlugin = ({ types: t }) => {
                   }
                 }
               }
+            }
+          },
+
+          ConditionalExpression(path) {
+            let parent = path.parentPath;
+            while (parent && !t.isObjectProperty(parent)) {
+              parent = parent.parentPath;
+            }
+            if (visitedConditionalExpression.includes(parent)) {
+              return;
+            }
+            visitedConditionalExpression.push(parent);
+            if (parent) {
+              parent.addComment(
+                'leading',
+                ` FIXME: ❌ Conditional expression detected. Only static values are allowed in makeStyles; please create separate slots for each condition and apply them using \`mergeClasses\``,
+                true
+              );
             }
           },
         });
