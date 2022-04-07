@@ -48,6 +48,13 @@ export const transformShorthandsPlugin = ({ types: t }) => {
                   t.isMemberExpression(value) &&
                   value.toString().indexOf('tokens.color') === 0
                 ) {
+                  // `xxx: token.color` -> `xxxColor: token.color`
+                  key.replaceWithSourceString(`${key.toString()}Color`);
+                } else if (
+                  keyName === 'background' &&
+                  value.toString().indexOf(' ') < 0
+                ) {
+                  // `background: yyy` where yyy has no space -> `backgroundColor: yyy`
                   key.replaceWithSourceString(`${key.toString()}Color`);
                 } else {
                   key.addComment(

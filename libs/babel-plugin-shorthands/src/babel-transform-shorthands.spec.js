@@ -8,7 +8,8 @@ export const useStyles = makeStyles({
   root: {
     flex: 1,
     padding: "5px",
-    background: tokens.colorNeutralForeground1
+    background: tokens.colorNeutralForeground1,
+    background: 'red'
   },
 });
 `;
@@ -25,7 +26,8 @@ export const useStyles = makeStyles({
           // FIXME: ❌ unsupported css property, please manually expand shorthand
           flex: 1,
           SHORTHANDS_KEYWORD_FOR_EASY_REPLACE.padding(\\"5px\\"),
-          backgroundColor: tokens.colorNeutralForeground1
+          backgroundColor: tokens.colorNeutralForeground1,
+          backgroundColor: 'red'
         }
       });"
     `);
