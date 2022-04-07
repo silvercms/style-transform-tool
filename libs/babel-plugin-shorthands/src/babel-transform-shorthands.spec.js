@@ -55,4 +55,27 @@ export const useStyles = makeStyles({
       });"
     `);
   });
+
+  it('transform conditional expressions correctly', () => {
+    const code = `
+export const useStyles = makeStyles({
+  root: {
+    overflow: isScroll ? 'scroll' : isHidden ? 'hidden' : "auto",
+  },
+});
+`;
+
+    expect(
+      Babel.transformSync(code, {
+        babelrc: false,
+        configFile: false,
+        plugins: [[transformShorthandsPlugin]],
+      }).code
+    ).toMatchInlineSnapshot(`
+      "export const useStyles = makeStyles({
+        root: { SHORTHANDS_KEYWORD_FOR_EASY_REPLACE.overflow(isScroll ? 'scroll' : isHidden ? 'hidden' : \\"auto\\")
+        }
+      });"
+    `);
+  });
 });
