@@ -10,10 +10,7 @@ import {
   transformShorthandsHelper,
   transformShorthandsPlugin,
 } from 'v9helper-babel-plugin-shorthands';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const helper = require('v9helper-transform-style-object');
-export const transformStylesObject = helper.transformStylesObject;
+import { transformTokenPlugin } from 'v9helper-transform-style-object';
 
 export const plugins: any = {};
 
@@ -41,6 +38,7 @@ export const transformNameSpacedStyle: TransformNameSpacedStyle = (
             userVariables,
           },
         ],
+        [transformTokenPlugin],
         [plugins['babel-transform-shorthands']],
       ],
       highlightCode: false,

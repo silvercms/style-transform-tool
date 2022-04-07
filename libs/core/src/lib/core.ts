@@ -137,7 +137,7 @@ const computeStylesForOneTheme: ComputeOneTheme =
       preparedSiteVariables?.[themeName];
     const siteVariables =
       preparedSiteVariablesCurrentTheme ??
-      getTMPsiteVariables({ gitRoot, themeName });
+      getTMPsiteVariables({ gitRoot: gitRoot!, themeName });
     if (preparedSiteVariables && !preparedSiteVariablesCurrentTheme) {
       preparedSiteVariables[themeName] = siteVariables;
     }
@@ -158,7 +158,7 @@ const computeStylesForOneTheme: ComputeOneTheme =
           namespaceParmsWithStringTokens: makeNamespaceParms(
             themeWithStringTokens
           ),
-          variable: Object.keys(variables)?.[0],
+          variable: Object.keys(variables!)?.[0],
           variableProps,
         })
       : computeStyles({

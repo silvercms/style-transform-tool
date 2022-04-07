@@ -2,11 +2,8 @@ import { teamsTheme, Provider } from '@fluentui/react-northstar';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, useRoutes, Navigate } from 'react-router-dom';
-import {
-  transformNameSpacedStyle,
-  transformStylesObject,
-  getAllVariables,
-} from './loadBabel';
+import { transformNameSpacedStyle, getAllVariables } from './loadBabel';
+import { transformStylesObject } from 'v9helper-transform-style-object';
 import { ColorTokenApp, TransformApp } from './pages';
 
 const Transform = () => (

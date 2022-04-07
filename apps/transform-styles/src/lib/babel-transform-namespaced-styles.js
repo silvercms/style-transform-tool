@@ -1,5 +1,4 @@
-import template from "@babel/template";
-import { v0ToV9 } from "../tokenMapping/getColorToken.js";
+import template from '@babel/template';
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function ({ types: t }) {
@@ -7,7 +6,7 @@ export default function ({ types: t }) {
     visitor: {
       Program(path) {
         path.unshiftContainer(
-          "body",
+          'body',
           template.statement.ast(
             `import { makeStyles, tokens, shorthands } from "@msteams/components-teams-fluent-ui";`
           )
@@ -18,9 +17,9 @@ export default function ({ types: t }) {
         t.assertObjectExpression(path.node.declaration.expression);
 
         const slots = path
-          .get("declaration")
-          .get("expression")
-          .get("properties");
+          .get('declaration')
+          .get('expression')
+          .get('properties');
 
         // TODO figure out a nice way to add new line before
         let resultMakeStylesSource = ` 
@@ -32,18 +31,18 @@ export default function ({ types: t }) {
         slots.forEach((slot) => {
           const slotName = slot.node.key.name;
 
-          let slotStylesString = "";
+          let slotStylesString = '';
 
-          const variableProperties = slot.get("value").get("properties");
+          const variableProperties = slot.get('value').get('properties');
           variableProperties.forEach((variableProperty) => {
             const currVariable = variableProperty.node.key.name;
 
             if (userVariables.includes(currVariable)) {
-              const styleFunction = variableProperty.get("value");
+              const styleFunction = variableProperty.get('value');
 
               let stylesSource = getStylesSource({
                 t,
-                stylesFunctionBody: styleFunction.get("body"),
+                stylesFunctionBody: styleFunction.get('body'),
               });
               stylesSource = replaceTokenWithFullPath({
                 styleFunction,
@@ -60,48 +59,29 @@ export default function ({ types: t }) {
           });
 
           slotStylesString = slotStylesString.trim().length
-            ? `\n${slotName}: {\n` + slotStylesString + "\n},"
-            : "";
+            ? `\n${slotName}: {\n` + slotStylesString + '\n},'
+            : '';
           resultMakeStylesSource += slotStylesString;
         });
 
-        resultMakeStylesSource = resultMakeStylesSource + "\n});";
+        resultMakeStylesSource = resultMakeStylesSource + '\n});';
 
         const makeStylesNode = template.statement.ast(resultMakeStylesSource, {
           preserveComments: true,
         });
         path.replaceWith(makeStylesNode);
-
-        // replace v0 token with v9 token
-        path.traverse({
-          MemberExpression(path) {
-            if (
-              path.node.object.name &&
-              path.node.object.name.indexOf("colorScheme") === 0
-            ) {
-              const scheme = path.node.object.name
-                .slice("colorScheme".length)
-                .toLowerCase();
-              const token = path.node.property.name;
-              const v9Token = v0ToV9({ scheme, token });
-              v9Token && path.replaceWithSourceString(`tokens.${v9Token}`);
-            }
-          },
-        });
-
-        // path.insertBefore(t.expressionStatement(t.stringLiteral(``)));
       },
     },
   };
 }
 
 const getStylesSource = ({ t, stylesFunctionBody }) => {
-  let stylesSource = "";
+  let stylesSource = '';
 
   if (t.isBlockStatement(stylesFunctionBody.node)) {
     stylesFunctionBody.traverse({
       ReturnStatement(path) {
-        stylesSource = path.get("argument").getSource();
+        stylesSource = path.get('argument').getSource();
       },
     });
   } else if (t.isObjectExpression(stylesFunctionBody.node)) {
@@ -109,8 +89,8 @@ const getStylesSource = ({ t, stylesFunctionBody }) => {
   }
 
   if (
-    stylesSource[0] === "{" &&
-    stylesSource[stylesSource.length - 1] === "}"
+    stylesSource[0] === '{' &&
+    stylesSource[stylesSource.length - 1] === '}'
   ) {
     stylesSource = stylesSource.slice(1, stylesSource.length - 1);
   }
@@ -120,7 +100,7 @@ const getStylesSource = ({ t, stylesFunctionBody }) => {
 
 // replace tokens like `foregroundActive` into `colorSchemeBrand.foregroundActive`
 const replaceTokenWithFullPath = ({ t, styleFunction, stylesSource }) => {
-  const styleFunctionParam = styleFunction.get("params")[0];
+  const styleFunctionParam = styleFunction.get('params')[0];
 
   const bindings = styleFunction.scope.bindings;
 
@@ -152,7 +132,7 @@ const replaceTokenWithFullPath = ({ t, styleFunction, stylesSource }) => {
 
       // string replace -> not the best, but not the worst
       stylesSource = stylesSource.replace(
-        new RegExp(bindingIdentifier.name, "g"),
+        new RegExp(bindingIdentifier.name, 'g'),
         variableName
       );
     }
