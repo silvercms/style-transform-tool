@@ -1,2 +1,5 @@
-export * from './transform-style-object';
-export * from './mapping';
+export {
+  transformStylesObject,
+  transformTokenPlugin,
+} from './transform-style-object';
+export { mapping } from './mapping';
