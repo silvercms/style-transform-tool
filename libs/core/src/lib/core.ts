@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import shakerEvaluator from '@linaria/shaker';
-import { Module } from '@linaria/babel-preset';
+import { Module, Evaluator } from '@linaria/babel-preset';
 import {
   getAllThemesStylesFiles,
   getCurrentTMPtheme,
@@ -15,6 +15,12 @@ import {
   makeNamespaceParms,
 } from './transformToken';
 import * as babelTSpresets from '@babel/preset-typescript';
+import {
+  ComputeOneTheme,
+  ComputeStylesFromFile,
+  Main,
+  ThemeName,
+} from './types';
 
 // const hrToSeconds = (hrtime) => {
 //   const raw = hrtime[0] + hrtime[1] / 1e9;
@@ -22,6 +28,28 @@ import * as babelTSpresets from '@babel/preset-typescript';
 // };
 
 // linaria get styles start ---------
+const theme_namespace_helper_Evaluator: Evaluator = (
+  _filename,
+  _options,
+  _text,
+  _only
+) => {
+  return [
+    `"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+value: true
+});
+exports.getOverrideFn = void 0;
+
+var getOverrideFn = function getOverrideFn() {
+return function () {};
+};
+
+exports.getOverrideFn = getOverrideFn;`,
+    null,
+  ];
+};
 const linariaOptions = {
   displayName: false,
   evaluate: true,
@@ -33,23 +61,7 @@ const linariaOptions = {
     },
     {
       test: /[/\\]theme-namespace-helper/,
-      action: (_filename, _options, _text, _only) => {
-        return [
-          `"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getOverrideFn = void 0;
-
-var getOverrideFn = function getOverrideFn() {
-  return function () {};
-};
-
-exports.getOverrideFn = getOverrideFn;`,
-          null,
-        ];
-      },
+      action: theme_namespace_helper_Evaluator,
     },
   ],
   babelOptions: {
@@ -90,7 +102,7 @@ const computedNamespacedStyles =
     const styleF = exports[slotName][variable];
 
     if (styleF && typeof styleF === 'function') {
-      namespaceParmsWithStringTokens.variableProps = variableProps;
+      namespaceParmsWithStringTokens.variableProps = variableProps ?? {};
       const slotStyle = styleF(namespaceParmsWithStringTokens);
 
       if (Object.keys(slotStyle).length > 0) {
@@ -104,27 +116,35 @@ const computedNamespacedStyles =
 // multi-theme handling start ---------
 
 // Compute styles and assign to computedStyles[slotName][themeName]
-const computeStylesForOneTheme =
-  ({ gitRoot, themeName, currentThemeStylesFile, exportName }) =>
+const computeStylesForOneTheme: ComputeOneTheme =
+  ({
+    themeName,
+    currentThemeStylesFile,
+    exportName,
+    preparedSiteVariables,
+    gitRoot,
+  }) =>
   ({
     isNamespaced,
     // namespaced
-    variable,
     variableProps,
     // non-namespaced
     variables,
     componentProps,
   }) =>
   (computedStyles) => {
-    // let startT = process.hrtime();
+    const preparedSiteVariablesCurrentTheme =
+      preparedSiteVariables?.[themeName];
+    const siteVariables =
+      preparedSiteVariablesCurrentTheme ??
+      getTMPsiteVariables({ gitRoot, themeName });
+    if (preparedSiteVariables && !preparedSiteVariablesCurrentTheme) {
+      preparedSiteVariables[themeName] = siteVariables;
+    }
+
     const tmpTheme = {
-      siteVariables: getTMPsiteVariables({ gitRoot, themeName }) ?? {},
+      siteVariables: siteVariables ?? {},
     };
-    // console.log(
-    //   'computeStylesForOneTheme',
-    //   'getTMPsiteVariables',
-    //   hrToSeconds(process.hrtime(startT))
-    // );
 
     const themeWithStringTokens = replaceSiteVariblesToString(tmpTheme);
 
@@ -138,7 +158,7 @@ const computeStylesForOneTheme =
           namespaceParmsWithStringTokens: makeNamespaceParms(
             themeWithStringTokens
           ),
-          variable,
+          variable: Object.keys(variables)?.[0],
           variableProps,
         })
       : computeStyles({
@@ -156,12 +176,11 @@ const computeStylesForOneTheme =
     });
   };
 
-const computeAllThemes =
-  ({ gitRoot, inputFilename, exportName }) =>
+const computeAllThemes: ComputeStylesFromFile =
+  ({ gitRoot, inputFilename, exportName, preparedSiteVariables }) =>
   ({
     isNamespaced,
     // namespaced
-    variable,
     variableProps,
     // non-namespaced
     variables,
@@ -183,14 +202,14 @@ const computeAllThemes =
       }
 
       computeStylesForOneTheme({
-        gitRoot,
-        themeName,
+        themeName: themeName as ThemeName,
         currentThemeStylesFile,
         exportName,
+        gitRoot,
+        preparedSiteVariables,
       })({
         isNamespaced,
         // namespaced
-        variable,
         variableProps,
         // non-namespaced
         variables,
@@ -201,12 +220,11 @@ const computeAllThemes =
     return computedStyles;
   };
 
-const computeCurrentTheme =
-  ({ gitRoot, inputFilename, exportName }) =>
+const computeCurrentTheme: ComputeStylesFromFile =
+  ({ gitRoot, inputFilename, exportName, preparedSiteVariables }) =>
   ({
     isNamespaced,
     // namespaced
-    variable,
     variableProps,
     // non-namespaced
     variables,
@@ -223,14 +241,14 @@ const computeCurrentTheme =
     const computedStyles = {};
 
     computeStylesForOneTheme({
-      gitRoot,
-      themeName,
+      themeName: themeName as ThemeName,
       currentThemeStylesFile: inputFilename,
       exportName,
+      gitRoot,
+      preparedSiteVariables,
     })({
       isNamespaced,
       // namespaced
-      variable,
       variableProps,
       // non-namespaced
       variables,
@@ -242,12 +260,16 @@ const computeCurrentTheme =
 
 // multi-theme handling end ---------
 
-export const main =
-  ({ inputFilename, exportName, isTransformAllThemes }) =>
+export const main: Main =
+  ({
+    inputFilename,
+    exportName,
+    isTransformAllThemes,
+    preparedSiteVariables,
+  }) =>
   ({
     isNamespaced,
     // namespaced
-    variable,
     variableProps,
     // non-namespaced
     variables,
@@ -269,10 +291,10 @@ export const main =
       gitRoot,
       inputFilename,
       exportName,
+      preparedSiteVariables,
     })({
       isNamespaced,
       // namespaced
-      variable,
       variableProps,
       // non-namespaced
       variables,
