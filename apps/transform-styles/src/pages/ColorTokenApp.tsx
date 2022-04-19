@@ -1,23 +1,23 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   ColorSchemeDropdown,
   ColorTokenDropdown,
-} from "../components/ColorDropdown";
-import { ColorToken } from "../components/ColorToken";
+} from '../components/ColorDropdown';
+import { ColorToken } from '../components/ColorToken';
 import {
   getV0ColorValues,
   v0ToV9,
   getV0ToV9ColorValues,
   getTokensFromScheme,
-} from "../tokenMapping/getColorToken";
-import { Divider, Header, Checkbox, Button } from "@fluentui/react-northstar";
-import { Link } from "react-router-dom";
-import { isTokenSameColor, numberOfDiffColors } from "../tokenMapping/colorTokenCompare";
-import { ColorTokenDiff } from "../components/ColorTokenDiff";
+} from '../tokenMapping/getColorToken';
+import { Divider, Header, Checkbox, Button } from '@fluentui/react-northstar';
+import { Link } from 'react-router-dom';
+import { isTokenSameColor } from '../tokenMapping/colorTokenCompare';
+import { ColorTokenDiff } from '../components/ColorTokenDiff';
 
 export const ColorTokenApp = () => {
-  const [scheme, setScheme] = React.useState("default");
-  const [token, setToken] = React.useState("foreground");
+  const [scheme, setScheme] = React.useState('default');
+  const [token, setToken] = React.useState('foreground');
 
   const v0Name = `${scheme}.${token}`;
   const v0Value = getV0ColorValues({ scheme, token });
@@ -28,11 +28,11 @@ export const ColorTokenApp = () => {
     <div style={{ paddingTop: 20 }}>
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          marginRight: "auto",
-          justifyContent: "space-between",
-          width: "100%",
+          display: 'flex',
+          alignItems: 'center',
+          marginRight: 'auto',
+          justifyContent: 'space-between',
+          width: '100%',
         }}
       >
         <Header as="h2" content={`v0 token ➡ v9 token`} />
@@ -40,12 +40,12 @@ export const ColorTokenApp = () => {
           <Button
             text
             content="convert tokens in styles"
-            style={{ textDecoration: "underline" }}
+            style={{ textDecoration: 'underline' }}
           />
         </Link>
       </div>
 
-      <div style={{ display: "flex", gap: 10 }}>
+      <div style={{ display: 'flex', gap: 10 }}>
         <ColorSchemeDropdown setSelectedScheme={setScheme} />
         <ColorTokenDropdown scheme={scheme} setSelectedToken={setToken} />
       </div>
@@ -57,7 +57,7 @@ export const ColorTokenApp = () => {
     </div>
   );
 };
-ColorTokenApp.displayName = "ColorTokenApp";
+ColorTokenApp.displayName = 'ColorTokenApp';
 
 // show all tokens in current scheme, provide option to toggle only the ones with different color value
 export const AllTokens = ({ scheme }: { scheme: string }) => {
@@ -66,18 +66,23 @@ export const AllTokens = ({ scheme }: { scheme: string }) => {
   const tokens = React.useMemo(() => {
     const allTokens = getTokensFromScheme(scheme);
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {allTokens.map((token) => {
           const v0Value = getV0ColorValues({ scheme, token });
           const v9Value = getV0ToV9ColorValues({ scheme, token });
           if (showDiffOnly && isTokenSameColor(v0Value, v9Value)) {
-            return <></>;
+            return null;
           }
           return (
-            <div key={token} style={{ display: "flex", gap: 40 }}>
+            <div key={token} style={{ display: 'flex', gap: 40 }}>
               <ColorToken name={`${scheme}.${token}`} value={v0Value} />
               <ColorToken name={v0ToV9({ scheme, token })} value={v9Value} />
-              <ColorTokenDiff v0value={v0Value} v9value={v9Value} scheme={scheme} token={token}/>
+              <ColorTokenDiff
+                v0value={v0Value}
+                v9value={v9Value}
+                scheme={scheme}
+                token={token}
+              />
             </div>
           );
         })}

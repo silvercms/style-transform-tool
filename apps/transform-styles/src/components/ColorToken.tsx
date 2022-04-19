@@ -1,5 +1,5 @@
-import * as React from "react";
-import { ColorTokenValue } from "../tokenMapping/colorTokenCompare";
+import * as React from 'react';
+import { ColorTokenValue } from '../tokenMapping/colorTokenCompare';
 
 export interface ColorTokenProps {
   name: string;
@@ -7,17 +7,17 @@ export interface ColorTokenProps {
 }
 
 export const ColorToken: React.FC<ColorTokenProps> = ({ name, value }) => (
-  <div style={{ display: "flex", flexDirection: "column" }}>
+  <div style={{ display: 'flex', flexDirection: 'column' }}>
     <p>{name}</p>
     <div
       style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr 1fr",
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
         maxWidth: 600,
         minWidth: 300,
-        borderTop: "1px dotted",
-        borderBottom: "1px dotted",
-        borderLeft: "1px dotted",
+        borderTop: '1px dotted',
+        borderBottom: '1px dotted',
+        borderLeft: '1px dotted',
       }}
     >
       <span style={getColorBlockStyles(value.light)}>
@@ -32,30 +32,30 @@ export const ColorToken: React.FC<ColorTokenProps> = ({ name, value }) => (
     </div>
   </div>
 );
-ColorToken.displayName = "ColorToken";
+ColorToken.displayName = 'ColorToken';
 
 const getColorBlockStyles = (color: string) => {
   if (color.length < 7) {
     color =
-      "#" +
+      '#' +
       color
         .slice(1)
-        .split("")
+        .split('')
         .map((d) => d + d)
-        .join("");
+        .join('');
   }
 
   return {
     backgroundColor: color,
     color: getTextColor(color),
     padding: 10,
-    borderRight: "1px dotted",
+    borderRight: '1px dotted',
   };
 };
 
 const getTextColor = (bgColor: string) =>
-  bgColor[0] !== "#"
-    ? "#000"
-    : parseInt(bgColor.replace("#", ""), 16) > 0xffffff / 2
-    ? "#000"
-    : "#fff";
+  bgColor[0] !== '#'
+    ? '#000'
+    : parseInt(bgColor.replace('#', ''), 16) > 0xffffff / 2
+    ? '#000'
+    : '#fff';

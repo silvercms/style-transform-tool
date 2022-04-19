@@ -52,14 +52,14 @@ export const lookupv9Tokens = (value) => {
   const candidates = {};
 
   Object.entries(teamsLightTheme)
-    .filter(entry => (entry[1] === value.light))
-    .map( entry => { 
+    .filter((entry) => entry[1] === value.light)
+    .forEach((entry) => {
       candidates[entry[0]] = 1;
     });
 
-    Object.entries(teamsDarkTheme)
-    .filter(entry => (entry[1] === value.dark))
-    .map( entry => { 
+  Object.entries(teamsDarkTheme)
+    .filter((entry) => entry[1] === value.dark)
+    .forEach((entry) => {
       if (candidates[entry[0]]) {
         candidates[entry[0]]++;
       } else {
@@ -67,9 +67,9 @@ export const lookupv9Tokens = (value) => {
       }
     });
 
-    Object.entries(teamsHighContrastTheme)
-    .filter(entry => (entry[1] === value.contrast))
-    .map( entry => { 
+  Object.entries(teamsHighContrastTheme)
+    .filter((entry) => entry[1] === value.contrast)
+    .forEach((entry) => {
       if (candidates[entry[0]]) {
         candidates[entry[0]]++;
       } else {
@@ -77,5 +77,7 @@ export const lookupv9Tokens = (value) => {
       }
     });
 
-  return Object.entries(candidates).sort((a, b) => a[1] < b[1]).filter(a => a[1] > 1);
-}
+  return Object.entries(candidates)
+    .sort((a, b) => a[1] < b[1])
+    .filter((a) => a[1] > 1);
+};
