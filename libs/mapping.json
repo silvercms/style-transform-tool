@@ -17,7 +17,7 @@
     "background3": "colorNeutralBackground4",
     "background4": "colorNeutralBackground6",
     "background5": "colorNeutralBackground6",
-    "background6": "colorNeutralBackgroundInverted",
+    "background6": "colorNeutralBackground5",
 
     "foregroundHover": "colorNeutralForeground2Hover",
     "foregroundHover1": "colorNeutralForegroundInvertedHover",
