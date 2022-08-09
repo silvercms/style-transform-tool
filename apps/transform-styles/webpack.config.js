@@ -56,5 +56,13 @@ module.exports = (config) => {
         process: 'process/browser',
       },
     },
+    output: {
+      ...config.output,
+      publicPath: '/',
+    },
+    devServer: {
+      ...config.devServer,
+      historyApiFallback: true,
+    },
   };
 };
