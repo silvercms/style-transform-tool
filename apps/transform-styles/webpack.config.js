@@ -62,7 +62,9 @@ module.exports = (config) => {
     },
     devServer: {
       ...config.devServer,
-      historyApiFallback: true,
+      historyApiFallback: {
+        index: '/',
+      },
     },
   };
 };
