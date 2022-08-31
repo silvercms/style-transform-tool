@@ -38,7 +38,7 @@ export const makeNamespaceParms = (theme) => ({
 export const hasToken = (str) => str.indexOf('siteVariables_') >= 0;
 
 export const tokensV0toV9 = (str) => {
-  const noReplacement = [];
+  const comments = [];
   let replacementValue = `\`${str
     .split(' ')
     .map((word) => {
@@ -50,7 +50,7 @@ export const tokensV0toV9 = (str) => {
         const tokenName = word.split('_');
         tokenName.pop();
         tokenName.shift();
-        noReplacement.push(
+        comments.push(
           ` FIXME: ⚠️ No v9 matching found for token ${tokenName.join(
             '.'
           )}, using its value \`${matchResult.replacement}\` as placeholder`
@@ -59,10 +59,13 @@ export const tokensV0toV9 = (str) => {
           tokenName[0] === 'colors' &&
           matchResult.replacement.startsWith('#')
         ) {
-          noReplacement.push(
+          comments.push(
             ' You can locate a token in https://react.fluentui.dev/?path=/docs/theme-color--page'
           );
         }
+      }
+      if (matchResult.comment) {
+        comments.push(matchResult.comment);
       }
       return matchResult.replacement;
     })
@@ -72,12 +75,13 @@ export const tokensV0toV9 = (str) => {
   }
   return {
     value: replacementValue,
-    comments: noReplacement,
+    comments,
   };
 };
 
 const replaceOneToken = (token) => {
   let v9Token;
+  let comment = undefined;
   if (mapping) {
     if (token.indexOf('siteVariables_colorScheme') >= 0) {
       v9Token = replaceColorToken(token);
@@ -85,6 +89,9 @@ const replaceOneToken = (token) => {
       // font size token
       const size = token.split('_')[2];
       v9Token = mapping.font.size[size];
+      if (size === 'large') {
+        comment = ` Warning: please notice v0 'large' is 18px; it maps to v9 fontSizeBase400 (16px) or fontSizeBase500 (20px)`;
+      }
     } else if (token.indexOf('siteVariables_fontWeight') >= 0) {
       // font weight token
       const weight = token.split('_')[1]?.slice(10)?.toLowerCase();
@@ -101,10 +108,12 @@ const replaceOneToken = (token) => {
     ? {
         replacement: `$\{tokens.${v9Token}}`,
         hasMatch: true,
+        comment,
       }
     : {
         replacement: token.split('_').pop(),
         hasMatch: false,
+        comment,
       };
 };
 
