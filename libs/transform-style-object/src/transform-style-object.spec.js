@@ -73,7 +73,9 @@ describe('transformStyleObject', () => {
             // FIXME: ❌ Conditional expression detected. Only static values are allowed in makeStyles; please create separate slots for each condition and apply them using \`mergeClasses\`
             backgroundColor: isPositive ? colors.grey[\\"250\\"] : colorSchemeBrand.borderPressed
           },
+          // Warning: please notice v0 'large' is 18px; it maps to v9 fontSizeBase400 (16px) or fontSizeBase500 (20px)
           fontSize: tokens.fontSizeBase400,
+          // Warning: please notice v0 'large' is 18px; it maps to v9 fontSizeBase400 (16px) or fontSizeBase500 (20px)
           fontSize: tokens.fontSizeBase400,
           fontWeight: tokens.fontWeightSemibold,
           // FIXME: ❌ No v9 matching found for token fontWeightBold
@@ -87,6 +89,7 @@ describe('transformStyleObject', () => {
       transformStylesObject(`{
       color: colors.brand["500"],
       background: grey["550"],
+      borderRightColor: colors.white,
     }`)
     ).toMatchInlineSnapshot(`
       " {
@@ -95,7 +98,9 @@ describe('transformStyleObject', () => {
           color: colors.brand[\\"500\\"],
           // FIXME: ⚠️ No v9 matching found for token grey[\\"550\\"], its value is \`#3d3d3d\`
           // You can locate a token in https://react.fluentui.dev/?path=/docs/theme-color--page
-          backgroundColor: grey[\\"550\\"]
+          backgroundColor: grey[\\"550\\"],
+          // FIXME: ❌ color white detected; Consider replacing with token in https://react.fluentui.dev/?path=/docs/theme-color--page
+          borderRightColor: colors.white
         }
       "
     `);

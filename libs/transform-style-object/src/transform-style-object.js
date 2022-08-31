@@ -29,7 +29,7 @@ const ALL_SCHEMES = [
   'amethyst',
 ];
 
-const addFixMe = (t, path) => {
+const addFixMe = (t, path, comment) => {
   let parent = path.parentPath;
   while (parent && !t.isObjectProperty(parent)) {
     parent = parent.parentPath;
@@ -37,7 +37,7 @@ const addFixMe = (t, path) => {
   if (parent) {
     parent.addComment(
       'leading',
-      ` FIXME: ❌ No v9 matching found for token ${path.toString()}`,
+      comment ?? ` FIXME: ❌ No v9 matching found for token ${path.toString()}`,
       true
     );
   }
@@ -46,6 +46,15 @@ const addFixMe = (t, path) => {
 const transformColorToken = (t, path) => {
   const key = path.get('object');
   const value = path.get('property');
+  if (value.toString() === 'black' || value.toString() === 'white') {
+    addFixMe(
+      t,
+      path,
+      ` FIXME: ❌ color ${value.toString()} detected; Consider replacing with token in https://react.fluentui.dev/?path=/docs/theme-color--page`
+    );
+    return;
+  }
+
   if (t.isIdentifier(key) && t.isIdentifier(value)) {
     // may be color token
     const scheme = ALL_SCHEMES.find((schemeName) =>
@@ -112,6 +121,13 @@ const transfromFont = (t, path) => {
   ) {
     const v0Token = valueName.split('.').pop();
     transform(v0Token, v0ToV9fontSize);
+    if (v0Token === 'large') {
+      addFixMe(
+        t,
+        value,
+        ` Warning: please notice v0 'large' is 18px; it maps to v9 fontSizeBase400 (16px) or fontSizeBase500 (20px)`
+      );
+    }
   } else if (keyName === 'fontWeight' && valueName.includes('fontWeight')) {
     const v0Token = valueName.slice(10).toLowerCase();
     transform(v0Token, v0ToV9fontWeight);
