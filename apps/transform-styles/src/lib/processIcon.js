@@ -1,6 +1,6 @@
 import * as v9Exports from '@fluentui/react-icons';
 import * as tmpExports from '@msteams/components-fluent-ui-icons';
-import nameDiffIconMapping from './nameDiffIconMapping.json';
+import iconMappingJSON from './iconMapping.json';
 
 const getIcons = (exports) => {
   return Object.keys(exports).reduce((acc, exportName) => {
@@ -23,22 +23,17 @@ const v9IconsNames = v9Icons.map(
 export const iconMapping = (() => {
   const result = [];
   tmpIcons.forEach((icon) => {
-    const iconName = icon.displayName.split('Icon')[0];
-    const index = v9IconsNames.findIndex(
-      (v9IconName) => v9IconName === iconName
-    );
-    if (index >= 0) {
-      result.push({ v0: icon, v9: v9Icons[index] });
-    } else {
-      // no name match
-      const v9NameDiffMatch = nameDiffIconMapping[icon.displayName];
-      const v9NameDiffMatchIdx = v9NameDiffMatch
-        ? v9IconsNames.findIndex((v9IconName) => v9NameDiffMatch === v9IconName)
-        : -1;
+    const v9Match = iconMappingJSON[icon.displayName];
+    const v9MatchIdx = v9Match
+      ? v9IconsNames.findIndex((v9IconName) => v9Match === v9IconName)
+      : -1;
+    if (v9MatchIdx >= 0) {
       result.push({
         v0: icon,
-        v9: v9NameDiffMatchIdx >= 0 ? v9Icons[v9NameDiffMatchIdx] : null,
+        v9: v9Icons[v9MatchIdx],
       });
+    } else {
+      result.push({ v0: icon, v9: null });
     }
   });
   return result;
