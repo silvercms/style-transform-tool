@@ -15,9 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     env:
-      CI: false
-      NODE_AUTH_NAME: ${{ secrets.AZURE_NPM_NAME }}
-      NODE_AUTH_TOKEN: ${{ secrets.AZURE_NPM_TOKEN }}
+      AZURE_AUTH_IDENT: ${{ secrets.AZURE_AUTH_IDENT }}
     steps:
       - uses: actions/checkout@v2
         with:
