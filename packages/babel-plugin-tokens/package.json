@@ -8,6 +8,7 @@
     "url": "https://github.com/YuanboXue-Amber/style-transform-tool"
   },
   "publishConfig": {
+    "access": "public",
     "directory": "dist"
   },
   "main": "dist/cjs/index.js",
