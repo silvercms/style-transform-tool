@@ -13,9 +13,13 @@
     "format": "prettier --write \"**/*.{js,ts,tsx,md,yml,json}\"",
     "lint": "turbo run lint",
     "test": "turbo run test",
-    "check-dependencies": "syncpack list-mismatches --prod --peer"
+    "check-dependencies": "syncpack list-mismatches --prod --peer",
+    "change": "yarn changeset",
+    "version:snapshot": "yarn changeset version --snapshot",
+    "publish": "yarn changeset publish --tag testing-new-feature"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.24.4",
     "eslint": "^8.4.1",
     "prettier": "^2.5.1",
     "syncpack": "^8.2.4",
