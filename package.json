@@ -1,0 +1,35 @@
+{
+  "name": "v9helper-turborepo",
+  "private": true,
+  "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "clean": "turbo run clean",
+    "dev": "turbo run dev --no-cache --parallel --continue",
+    "format": "prettier --write \"**/*.{js,ts,tsx,md,yml,json}\"",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "check-dependencies": "syncpack list-mismatches --prod --peer",
+    "change": "yarn changeset",
+    "publish": "yarn clean && yarn build --no-cache && yarn changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.24.4",
+    "eslint": "^8.4.1",
+    "prettier": "^2.5.1",
+    "syncpack": "^8.2.4",
+    "ts-jest": "^29.0.1",
+    "turbo": "latest"
+  },
+  "packageManager": "yarn@3.2.3",
+  "resolutions": {
+    "@linaria/babel-preset@^3.0.0-beta.15": "patch:@linaria/babel-preset@npm%3A3.0.0-beta.23#./.yarn/patches/@linaria-babel-preset-npm-3.0.0-beta.23-1604e3cf92.patch",
+    "@linaria/babel-preset@^3.0.0-beta.23": "patch:@linaria/babel-preset@npm%3A3.0.0-beta.23#./.yarn/patches/@linaria-babel-preset-npm-3.0.0-beta.23-1604e3cf92.patch",
+    "@fluentui/react-icons-northstar": "0.66.4",
+    "@griffel/react": "1.5.7"
+  }
+}
