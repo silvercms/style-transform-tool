@@ -6,8 +6,8 @@ import {
 import { ColorToken } from "../components/ColorToken";
 import {
   getV0ColorValues,
-  v0ToV9,
-  getV0ToV9ColorValues,
+  v8ToV9,
+  getV8ToV9ColorValues,
   getTokensFromScheme,
 } from "../tokenMapping/getColorToken";
 import { Divider, Header, Checkbox, Button } from "@fluentui/react-northstar";
@@ -16,13 +16,13 @@ import { isTokenSameColor } from "../tokenMapping/colorTokenCompare";
 import { ColorTokenDiff } from "../components/ColorTokenDiff";
 
 export const ColorTokenApp = () => {
-  const [scheme, setScheme] = React.useState("default");
-  const [token, setToken] = React.useState("foreground");
+  const [scheme, setScheme] = React.useState("palette");
+  const [token, setToken] = React.useState("themePrimary");
 
   const v0Name = `${scheme}.${token}`;
   const v0Value = getV0ColorValues({ scheme, token });
-  const v9Name = v0ToV9({ scheme, token });
-  const v9Value = getV0ToV9ColorValues({ scheme, token });
+  const v9Name = v8ToV9({ scheme, token });
+  const v9Value = getV8ToV9ColorValues({ scheme, token });
 
   return (
     <div style={{ paddingTop: 20 }}>
@@ -78,14 +78,14 @@ export const AllTokens = ({ scheme }: { scheme: string }) => {
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {allTokens.map((token) => {
           const v0Value = getV0ColorValues({ scheme, token });
-          const v9Value = getV0ToV9ColorValues({ scheme, token });
+          const v9Value = getV8ToV9ColorValues({ scheme, token });
           if (showDiffOnly && isTokenSameColor(v0Value, v9Value)) {
             return null;
           }
           return (
             <div key={token} style={{ display: "flex", gap: 40 }}>
               <ColorToken name={`${scheme}.${token}`} value={v0Value} />
-              <ColorToken name={v0ToV9({ scheme, token })} value={v9Value} />
+              <ColorToken name={v8ToV9({ scheme, token })} value={v9Value} />
               <ColorTokenDiff v0value={v0Value} v9value={v9Value} />
             </div>
           );

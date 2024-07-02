@@ -6,7 +6,7 @@ import { transformNameSpacedStyle, getAllVariables } from "./loadBabel";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { transformStylesObject } from "v9helper-transform-style-object";
-import { ColorTokenApp, TransformApp, IconMappingApp } from "./pages";
+import { ColorTokenApp, TransformApp } from "./pages";
 
 const Transform = () => (
   <TransformApp
@@ -24,7 +24,6 @@ const App = () => {
       element: <Transform />,
     },
     { path: "colors", element: <ColorTokenApp /> },
-    { path: "icons", element: <IconMappingApp /> },
     {
       path: "*",
       element: <Navigate to="/" />,

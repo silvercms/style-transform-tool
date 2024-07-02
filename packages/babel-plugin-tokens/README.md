@@ -7,7 +7,7 @@ const result = Babel.transform(
   `
 export const useStyles = makeStyles({
   root: {
-    color: colorSchemeDefault.foreground,
+    color: palette.black,
     fontWeight: fontWeightRegular
   }
 });

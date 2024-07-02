@@ -8,7 +8,7 @@ export default function ({ types: t }) {
         path.unshiftContainer(
           "body",
           template.statement.ast(
-            `import { makeStyles, tokens, shorthands } from "@msteams/components-teams-fluent-ui";`
+            `import { makeStyles, tokens, shorthands } from "@fluentui/react-components";`
           )
         );
       },

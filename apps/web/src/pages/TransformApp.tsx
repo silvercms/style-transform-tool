@@ -95,22 +95,6 @@ export function TransformApp({
               onClick={showObjectExample}
             />
           </div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <Link tabIndex={-1} to="../colors">
-              <Button
-                text
-                content="🎨 View color mapping"
-                style={{ textDecoration: "underline" }}
-              />
-            </Link>
-            <Link tabIndex={-1} to="../icons">
-              <Button
-                text
-                content="🎭 View icon mapping"
-                style={{ textDecoration: "underline", marginTop: "-10px" }}
-              />
-            </Link>
-          </div>
         </div>
         <div
           style={{
@@ -166,7 +150,7 @@ export function TransformApp({
 
 const placeholderCode = `// paste *-namespace-*.ts styles file, or
 // paste a style object 
-{ color: colorSchemeDefault.foreground }
+{ color: palette.black }
 `;
 
 const ScrollToTopButton = () => {
@@ -255,7 +239,7 @@ const Help = () => (
     <ul>
       <li>
         simply paste the styles object -<br />
-        <Code>{`{ color: colorSchemeDefault.foreground }`}</Code> <br />
+        <Code>{`{ color: palette.black }`}</Code> <br />
         the result will contain:
         <ul>
           <li>the corresponding color token from converged library</li>
@@ -273,9 +257,9 @@ const Code = ({ children }: { children: React.ReactChild }) => (
 );
 
 const objectExample = `{
-  color: colorSchemeDefault.foreground,
-  background: colorSchemeDefault.background,
-  backgroundColor: colorSchemeDefault.background,
+  color: palette.black,
+  background: semanticColors.bodyFrameBackground,
+  backgroundColor: semanticColors.listBackground,
   position: "absolute",
   left: "50%",
   top: "50%",
@@ -283,8 +267,8 @@ const objectExample = `{
   transform: "translateX(-50%) translateY(-50%)",
   textDecoration: "underline overline dotted",
   ":hover": {
-    color: colorSchemeDefault.foregroundHover,
-    backgroundColor: colorSchemeDefault.backgroundHover1,
+    color: palette.themePrimary,
+    backgroundColor: palette.themeTertiary,
   },
 }`;
 
@@ -310,7 +294,7 @@ export default {
       backgroundColor: colorSchemeDefault.background,
       border: \`0.1rem solid \${colorSchemeDefault.border2}\`,
       bottom: "0.4rem",
-      color: colorSchemeDefault.foreground,
+      color: palette.black,
       display: "flex",
       flexDirection: "column",
       opacity: 0.9,

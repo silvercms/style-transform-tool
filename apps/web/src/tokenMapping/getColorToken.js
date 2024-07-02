@@ -12,7 +12,7 @@ import {
 
 export const v0MappedSchemes = Object.keys(tokenMapping);
 
-export const v0ToV9 = ({ scheme, token }) =>
+export const v8ToV9 = ({ scheme, token }) =>
   tokenMapping[`${scheme}`]?.[`${token}`];
 
 export const getTokensFromScheme = (scheme) =>
@@ -33,20 +33,25 @@ export const getV9ColorValues = ({ token }) => {
   };
 };
 
-export const getV0ToV9ColorValues = ({ scheme, token }) => {
-  const v9Token = v0ToV9({ scheme, token });
+export const getV8ToV9ColorValues = ({ scheme, token }) => {
+  let v9Token = v8ToV9({ scheme, token });
+
+  if (Array.isArray(v9Token)) {
+    v9Token = v9Token[0];
+  }
+
   return getV9ColorValues({ token: v9Token });
 };
 
 export const unifyColor = (color) =>
   color.length < 7
     ? "#" +
-      color
-        .slice(1)
-        .split("")
-        .map((d) => d + d)
-        .join("")
-        .toLowerCase()
+    color
+      .slice(1)
+      .split("")
+      .map((d) => d + d)
+      .join("")
+      .toLowerCase()
     : color.toLowerCase();
 
 export const lookupv9Tokens = (value) => {
